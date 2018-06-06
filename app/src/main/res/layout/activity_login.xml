@@ -4,6 +4,70 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
     tools:context=".LoginActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp">
+
+
+        <EditText
+            android:id="@+id/emailLogin"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="47dp"
+            android:background="#FFFFFF"
+            android:hint="@string/loginemail"
+            android:inputType="textEmailAddress"
+            android:maxLength="33"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="119dp"
+            android:background="#FFFFFF"
+            android:hint="@string/password"
+            android:inputType="textPassword"
+            android:maxLength="55"
+            />
+
+
+        <Button
+            android:id="@+id/sign_in_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="119dp"
+            android:background="#FFFFFF"
+            android:text="@string/loginbutton" />
+
+        <ImageView
+            android:id="@+id/imageView3"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignStart="@+id/imageView4"
+            android:layout_marginTop="56dp"
+            app:srcCompat="@drawable/ic_baseline_email_24px" />
+
+        <ImageView
+            android:id="@+id/imageView4"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="128dp"
+            app:srcCompat="@drawable/ic_baseline_vpn_key_24px" />
+
+    </RelativeLayout>
+
 
 </android.support.constraint.ConstraintLayout>

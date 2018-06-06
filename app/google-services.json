@@ -1,0 +1,63 @@
+{
+  "project_info": {
+    "project_number": "321209287428",
+    "firebase_url": "https://nfcreaderba.firebaseio.com",
+    "project_id": "nfcreaderba",
+    "storage_bucket": "nfcreaderba.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:321209287428:android:a3aca0db57f951c1",
+        "android_client_info": {
+          "package_name": "net.ictcampus.sutern.nfcreader"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "321209287428-k08d9rqa24im4iuq0hoq8cj79uihu521.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "321209287428-4tqemhja0fciel3lksfiiqjfkmdh9oh7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "net.ictcampus.sutern.nfcreader",
+            "certificate_hash": "281cbdcd99ad544d568429a2d62c98dad615fff9"
+          }
+        },
+        {
+          "client_id": "321209287428-vrt0cv9ed7gb5o7nr55fqud8uu3goet2.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "321209287428-k08d9rqa24im4iuq0hoq8cj79uihu521.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBPBCaZlCdks-1XihJCsyUIckJ_dSlpEbw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "321209287428-k08d9rqa24im4iuq0hoq8cj79uihu521.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
