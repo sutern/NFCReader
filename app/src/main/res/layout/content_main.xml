@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainInfo"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:layout_marginTop="?attr/actionBarSize"
     android:background="@color/colorBackground"
-    tools:context=".MainActivity"
     android:orientation="vertical"
     android:weightSum="1"
-    android:layout_marginTop="?attr/actionBarSize"
-    android:id="@+id/mainInfo">
+    tools:context=".MainActivity">
 
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:layout_marginTop="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp">
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        android:padding="10dp">
 
         <TextView
             android:id="@+id/InfoText"
@@ -32,10 +32,10 @@
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:layout_marginTop="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp">
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        android:padding="10dp">
 
         <fragment xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:map="http://schemas.android.com/apk/res-auto"
@@ -44,9 +44,9 @@
             android:layout_width="match_parent"
             android:layout_height="300dp"
             android:layout_margin="8dp"
-            map:cameraZoom="13"
-            map:mapType="normal"
+            map:cameraZoom="17"
             map:liteMode="true"
+            map:mapType="hybrid"
             tools:context=".MainActivity" />
 
 
