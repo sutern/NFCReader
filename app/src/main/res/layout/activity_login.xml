@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimary"
-    tools:context=".LoginActivity">
+    tools:context=".LoginActivity"
+    android:id="@+id/mainLayout">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -16,56 +17,49 @@
         android:layout_marginTop="10dp">
 
 
-        <EditText
+        <TextView
             android:id="@+id/emailLogin"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_alignParentTop="true"
-            android:layout_marginTop="47dp"
-            android:background="#FFFFFF"
-            android:hint="@string/loginemail"
-            android:inputType="textEmailAddress"
-            android:maxLength="33"/>
+            android:layout_marginTop="154dp"
+            android:background="@color/colorPrimary"
+            android:text="@string/logintext"
+            android:textAlignment="center"
+            android:textAllCaps="true"
+            android:textColor="@color/colorAccent"
+            android:textSize="20sp" />
 
-        <EditText
+        <View
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="119dp"
-            android:background="#FFFFFF"
-            android:hint="@string/password"
-            android:inputType="textPassword"
-            android:maxLength="55"
-            />
+            android:layout_height="2dp"
+            android:layout_below="@+id/emailLogin"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="2dp"
+            android:background="#FFFFFF" />
 
-
-        <Button
+        <com.google.android.gms.common.SignInButton
             android:id="@+id/sign_in_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_marginBottom="119dp"
-            android:background="#FFFFFF"
-            android:text="@string/loginbutton" />
-
-        <ImageView
-            android:id="@+id/imageView3"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignStart="@+id/imageView4"
-            android:layout_marginTop="56dp"
-            app:srcCompat="@drawable/ic_baseline_email_24px" />
+            android:layout_marginBottom="122dp"
+            android:background="#FFFFFF" />
 
         <ImageView
             android:id="@+id/imageView4"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginEnd="20dp"
-            android:layout_marginTop="128dp"
-            app:srcCompat="@drawable/ic_baseline_vpn_key_24px" />
+            android:layout_width="128dp"
+            android:layout_height="128dp"
+            android:layout_centerHorizontal="true"
+            app:srcCompat="@drawable/imglogo" />
+
+        <Button
+            android:id="@+id/sign_out_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="62dp"
+            android:background="#FFFFFF" />
 
     </RelativeLayout>
 
