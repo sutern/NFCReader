@@ -33,11 +33,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private TextView mStatusTextView;
     private TextView mDetailTextView;
 
+    private boolean isLoggedIn;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        isLoggedIn = false;
 
         mStatusTextView = findViewById(R.id.status);
         mDetailTextView = findViewById(R.id.detail);
@@ -106,6 +110,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void signIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
+
+        isLoggedIn = true;
     }
 
     private void signOut() {
@@ -116,13 +122,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         updateUI(null);
+                        isLoggedIn = false;
                     }
                 });
     }
 
     private void revokeAccess() {
         mAuth.signOut();
-
         mGoogleSignInClient.revokeAccess().addOnCompleteListener(this,
                 new OnCompleteListener<Void>() {
                     @Override
@@ -155,4 +161,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             signOut();
         }
     }
+
+
+
+
+
 }
