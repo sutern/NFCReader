@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_settings">Einstellungen</string>
+    <string name="password">Passwort</string>
+    <string name="add_card">Neue Karte hinzufügen</string>
+    <string name="contact">Kontaktieren</string>
+    <string name="share">Teilen</string>
+    <string name="send">Senden</string>
+    <string name="firebase_status_fmt">Firebase Benutzer: %s</string>
+    <string name="google_status_fmt">Google Benutzer: %s</string>
+    <string name="signed_out">Ausgeloggt</string>
+    <string name="loading">Bitte Warten...</string>
+    <string name="sign_out">Ausloggen</string>
+    <string name="see_history">Verlauf ansehen</string>
+    <string name="title_activity_login">Einloggen</string>
+    <string name="logintext">Mit Google Anmelden</string>
+    <string name="communicate">Sozial</string>
+    <string name="your_location">Ihr Standort</string>
+</resources>
