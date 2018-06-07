@@ -25,7 +25,7 @@
             android:background="#FFFFFF"
             android:hint="@string/loginemail"
             android:inputType="textEmailAddress"
-            android:maxLength="33"/>
+            android:maxLength="33" />
 
         <EditText
             android:layout_width="match_parent"
@@ -35,8 +35,7 @@
             android:background="#FFFFFF"
             android:hint="@string/password"
             android:inputType="textPassword"
-            android:maxLength="55"
-            />
+            android:maxLength="55" />
 
 
         <Button
