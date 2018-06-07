@@ -47,7 +47,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
-                android:text="Google Maps" />
+                android:text="@string/google_maps" />
 
             <fragment
                 android:id="@+id/map"
@@ -64,8 +64,8 @@
                 android:id="@+id/button2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Verlauf ansehen"
-                android:layout_margin="4dp"/>
+                android:layout_margin="4dp"
+                android:text="@string/see_history" />
 
         </LinearLayout>
 
