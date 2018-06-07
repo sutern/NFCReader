@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     android:background="@color/colorPrimary"
     tools:context=".LoginActivity"
-    android:id="@+id/mainLayout">
+    android:id="@+id/mainLayout"
+    android:theme="@style/AppTheme.NoActionBar">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -59,7 +60,19 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="62dp"
-            android:background="#FFFFFF" />
+            android:background="#FFFFFF"
+            android:text="@string/sign_out"/>
+
+        <TextView
+            android:id="@+id/status"
+            style="@style/ThemeOverlay.MyTextDetail"
+            android:text="@string/signed_out" />
+
+        <TextView
+            android:id="@+id/detail"
+            style="@style/ThemeOverlay.MyTextDetail"
+            android:layout_below="@+id/status"
+            tools:text="Firebase User ID: 123456789abc" />
 
     </RelativeLayout>
 
