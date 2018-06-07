@@ -22,7 +22,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
-public class LoginActivity extends MainActivity implements View.OnClickListener {
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = "GoogleActivity";
     private static final int RC_SIGN_IN = 9001;
@@ -45,6 +45,7 @@ public class LoginActivity extends MainActivity implements View.OnClickListener 
         mAuth = FirebaseAuth.getInstance();
 
         findViewById(R.id.sign_in_button).setOnClickListener(this);
+        findViewById(R.id.sign_out_button).setOnClickListener(this);
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -83,9 +84,6 @@ public class LoginActivity extends MainActivity implements View.OnClickListener 
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
-        // [START_EXCLUDE silent]
-        showProgressDialog();
-        // [END_EXCLUDE]
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
@@ -101,7 +99,6 @@ public class LoginActivity extends MainActivity implements View.OnClickListener 
                             Snackbar.make(findViewById(R.id.mainLayout), "Authentication Failed.", Snackbar.LENGTH_SHORT).show();
                             updateUI(null);
                         }
-                        hideProgressDialog();
                     }
                 });
     }
@@ -112,10 +109,8 @@ public class LoginActivity extends MainActivity implements View.OnClickListener 
     }
 
     private void signOut() {
-        // Firebase sign out
         mAuth.signOut();
 
-        // Google sign out
         mGoogleSignInClient.signOut().addOnCompleteListener(this,
                 new OnCompleteListener<Void>() {
                     @Override
@@ -126,10 +121,8 @@ public class LoginActivity extends MainActivity implements View.OnClickListener 
     }
 
     private void revokeAccess() {
-        // Firebase sign out
         mAuth.signOut();
 
-        // Google revoke access
         mGoogleSignInClient.revokeAccess().addOnCompleteListener(this,
                 new OnCompleteListener<Void>() {
                     @Override
@@ -140,16 +133,16 @@ public class LoginActivity extends MainActivity implements View.OnClickListener 
     }
 
     private void updateUI(FirebaseUser user) {
-        hideProgressDialog();
         if (user != null) {
             mStatusTextView.setText(getString(R.string.google_status_fmt, user.getEmail()));
             mDetailTextView.setText(getString(R.string.firebase_status_fmt, user.getUid()));
-
+            findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
             findViewById(R.id.sign_in_button).setVisibility(View.GONE);
         } else {
             mStatusTextView.setText(R.string.signed_out);
             mDetailTextView.setText(null);
-
+            findViewById(R.id.sign_out_button).setVisibility(View.GONE);
+            findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
         }
     }
 
