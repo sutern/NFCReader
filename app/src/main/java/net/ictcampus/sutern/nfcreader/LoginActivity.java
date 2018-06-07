@@ -35,7 +35,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private boolean isLoggedIn;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -122,9 +121,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         updateUI(null);
-                        isLoggedIn = false;
+
                     }
                 });
+        isLoggedIn = false;
     }
 
     private void revokeAccess() {
@@ -157,13 +157,23 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         int i = v.getId();
         if (i == R.id.sign_in_button) {
             signIn();
+            if (isLoggedIn) {
+                GoogleSignInAccount acc = GoogleSignIn.getLastSignedInAccount(this);
+                if (acc != null) {
+                    String name = acc.getDisplayName();
+                    String email = acc.getEmail();
+                    String id = acc.getId();
+
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    intent.putExtra("name", name);
+                    intent.putExtra("email", email);
+                    intent.putExtra("id", id);
+
+                    startActivity(intent);
+                }
+            }
         } else if (i == R.id.sign_out_button) {
             signOut();
         }
     }
-
-
-
-
-
 }
