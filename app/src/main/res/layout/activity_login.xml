@@ -7,15 +7,14 @@
     android:background="@color/colorPrimary"
     tools:context=".LoginActivity"
     android:id="@+id/mainLayout"
-    android:theme="@style/AppTheme.NoActionBar">
+    android:padding="15dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="10dp">
+        tools:layout_editor_absoluteX="10dp"
+        tools:layout_editor_absoluteY="10dp"
+        tools:ignore="MissingConstraints">
 
 
         <TextView
@@ -61,7 +60,7 @@
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="62dp"
             android:background="#FFFFFF"
-            android:text="@string/sign_out"/>
+            android:text="@string/sign_out" />
 
         <TextView
             android:id="@+id/status"
