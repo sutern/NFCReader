@@ -1,6 +1,8 @@
 package net.ictcampus.sutern.nfcreader;
 
 import android.Manifest;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -14,6 +16,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -34,6 +38,31 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
+
+    public ProgressDialog mProgressDialog;
+
+    public void showProgressDialog() {
+        if (mProgressDialog == null) {
+            mProgressDialog = new ProgressDialog(this);
+            mProgressDialog.setMessage(getString(R.string.loading));
+            mProgressDialog.setIndeterminate(true);
+        }
+        mProgressDialog.show();
+    }
+
+    public void hideProgressDialog() {
+        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+            mProgressDialog.dismiss();
+        }
+    }
+
+    public void hideKeyboard(View view) {
+        final InputMethodManager imn = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imn != null) {
+            imn.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
+
 
     private static final int MY_PERMISSION_RQUEST_CODE = 11;
     private GoogleMap mMap;
@@ -82,6 +111,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+        hideProgressDialog();
+    }
+
+    @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
             case MY_PERMISSION_RQUEST_CODE:
@@ -124,14 +159,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             latitude = mLastLocation.getLatitude();
             longitude = mLastLocation.getLongitude();
 
-            if (myCurrent!=null){
+            if (myCurrent != null) {
                 myCurrent.remove();
             }
-            myCurrent=mMap.addMarker(new MarkerOptions()
-                    .position(new LatLng(latitude,longitude))
+            myCurrent = mMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(latitude, longitude))
                     .title("You"));
 
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude,longitude),17.0f));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 17.0f));
 
 
         }
