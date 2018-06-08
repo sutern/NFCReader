@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
@@ -16,19 +15,21 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -67,8 +68,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private static int FASTETS_INTERVAL = 3000;
     private static int DISPLACEMENT = 10;
 
-
-
+    private LocationCallback mLocationCallback;
 
     Marker myCurrent;
 
@@ -81,8 +81,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         //Maps settings
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        mLocationCallback = new LocationCallback() {
+
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                Log.d("Info", "INfo");
+
+                if (locationResult.getLastLocation() == null) {
+                    return;
+                } else {
+                    mLastLocation = locationResult.getLastLocation();
+                    displayLocation();
+
+                }
+            }
+        };
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -101,7 +118,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         setUpLocation();
+
     }
+
 
     //Sidebar
     @Override
@@ -120,6 +139,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -168,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     //Login
     @Override
     public void onLocationChanged(Location location) {
-        mLastLocation = location;
+        startLocationUpdates();
         displayLocation();
     }
 
@@ -209,8 +229,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      */
     @Override
     public void onConnected(@Nullable Bundle bundle) {
+
+
         displayLocation();
         startLocationUpdates();
+
     }
 
     @Override
@@ -222,6 +245,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
+
 
     /**
      * starts the functions used to search the current location if the permission
@@ -237,6 +261,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case MY_PERMISSION_REQUEST_CODE:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     if (checkPlayServices()) {
+
                         buildGoogleApiClient();
                         createLocationRequest();
                         displayLocation();
@@ -261,6 +286,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 buildGoogleApiClient();
                 createLocationRequest();
                 displayLocation();
+
             }
         }
     }
@@ -331,14 +357,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      * @return returns true when the google play service is available
      */
     private boolean checkPlayServices() {
-        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
+        int resultCode = googleAPI.getInstance().isGooglePlayServicesAvailable(this);
 
         if (resultCode != ConnectionResult.SUCCESS) {
 
-            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
-
-                GooglePlayServicesUtil.getErrorDialog(resultCode, this, PLAY_SERVICES_RESOLUTION_REQUEST).show();
-
+            if (googleAPI.isUserResolvableError(resultCode)) {
+                googleAPI.getErrorDialog(this, resultCode,
+                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
             } else {
 
                 Toast.makeText(this, "This device can't support", Toast.LENGTH_SHORT).show();
@@ -371,7 +397,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             return;
         }
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+        mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
+
+
     }
 
     /**
@@ -383,5 +411,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mMap = map;
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopLocationUpdates();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        startLocationUpdates();
+        displayLocation();
+    }
+
+
+    private void stopLocationUpdates() {
+        mFusedLocationClient.removeLocationUpdates(mLocationCallback);
+    }
 
 }
+
+
+
