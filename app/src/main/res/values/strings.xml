@@ -22,4 +22,5 @@
     <string name="google_maps" translatable="false">Google Maps</string>
     <string name="see_history">See history</string>
     <string name="your_location">your location</string>
+    <string name="about">About</string>
 </resources>
