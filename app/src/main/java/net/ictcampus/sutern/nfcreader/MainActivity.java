@@ -3,6 +3,7 @@ package net.ictcampus.sutern.nfcreader;
 import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -139,6 +140,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -148,6 +150,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            startActivity(new Intent(MainActivity.this, SettingsActivity.class));
             return true;
         }
 
@@ -258,6 +261,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case MY_PERMISSION_REQUEST_CODE:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     if (checkPlayServices()) {
+
                         buildGoogleApiClient();
                         createLocationRequest();
                         displayLocation();
@@ -426,3 +430,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
 }
+
+
+
