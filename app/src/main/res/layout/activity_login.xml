@@ -16,7 +16,6 @@
         tools:layout_editor_absoluteY="10dp"
         tools:ignore="MissingConstraints">
 
-
         <TextView
             android:id="@+id/emailLogin"
             android:layout_width="match_parent"
@@ -53,27 +52,5 @@
             android:layout_centerHorizontal="true"
             app:srcCompat="@drawable/imglogo" />
 
-        <Button
-            android:id="@+id/sign_out_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="62dp"
-            android:background="#FFFFFF"
-            android:text="@string/sign_out" />
-
-        <TextView
-            android:id="@+id/status"
-            style="@style/ThemeOverlay.MyTextDetail"
-            android:text="@string/signed_out" />
-
-        <TextView
-            android:id="@+id/detail"
-            style="@style/ThemeOverlay.MyTextDetail"
-            android:layout_below="@+id/status"
-            tools:text="Firebase User ID: 123456789abc" />
-
     </RelativeLayout>
-
-
 </android.support.constraint.ConstraintLayout>
