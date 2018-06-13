@@ -1,6 +1,7 @@
 package net.ictcampus.sutern.nfcreader;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -19,10 +20,13 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -42,6 +46,17 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+
+import org.w3c.dom.Text;
+
+import java.util.Objects;
 
 /**
  * @author glausla
@@ -53,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         LocationListener {
 
     public ProgressDialog mProgressDialog;
+
 
     private static final int MY_PERMISSION_REQUEST_CODE = 11;
     private GoogleMap mMap;
@@ -73,12 +89,44 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private LocationCallback mLocationCallback;
 
+    private DatabaseReference mDatabase;
+
+    private String userid = FirebaseAuth.getInstance().getUid();
+
+    private DatabaseReference db = FirebaseDatabase.getInstance().getReference().child("users").child(userid);
+    private Query getInfoFromDB = db;
+
+
+
     Marker myCurrent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("users");
+
+
+        getInfoFromDB.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String email = Objects.requireNonNull(dataSnapshot.child("email").getValue()).toString();
+                String name = Objects.requireNonNull(dataSnapshot.child("username").getValue()).toString();
+
+                NavigationView nv = (NavigationView) findViewById(R.id.nav_view);
+                View hv = nv.getHeaderView(0);
+                TextView txtUsername = (TextView) hv.findViewById(R.id.username);
+                TextView txtEmail = (TextView) hv.findViewById(R.id.useremail);
+
+                txtUsername.setText(name);
+                txtEmail.setText(email);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
         //Maps settings
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -127,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            finishAffinity();
         }
     }
 
@@ -172,7 +220,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else if (id == R.id.nav_logout) {
             Intent intent = new Intent();
             setResult(1, intent);
-            this.finish();
+            finish();
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);

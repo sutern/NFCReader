@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -28,7 +29,10 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import net.ictcampus.sutern.nfcreader.models.User;
 
+import static android.view.View.GONE;
+
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
+
 
     private static final String TAG = "GoogleActivity";
     private static final int RC_SIGN_IN = 9001;
@@ -61,7 +65,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mAuth = FirebaseAuth.getInstance();
     }
 
+    @Override
+    public void onResume(){
+        super.onResume();
 
+        ProgressBar progressB = findViewById(R.id.progressBar);
+        progressB.setVisibility(GONE);
+    }
     @Override
     public void onStart() {
         super.onStart();
@@ -69,6 +79,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         FirebaseUser currentUser = mAuth.getCurrentUser();
         updateUI(currentUser);
     }
+
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -85,17 +97,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
         }
         if (requestCode == 1){
-            mAuth.signOut();
-
-            mGoogleSignInClient.signOut().addOnCompleteListener(this,
-                    new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            updateUI(null);
-
-                        }
-                    });
-            finish();
+            signOut();
         }
     }
 
@@ -133,44 +135,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         updateUI(null);
-
-                    }
-                });
-    }
-
-    private void revokeAccess() {
-        mAuth.signOut();
-        mGoogleSignInClient.revokeAccess().addOnCompleteListener(this,
-                new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        updateUI(null);
                     }
                 });
     }
 
     private void updateUI(FirebaseUser user) {
         if (user != null) {
-
-            String username = usernameFromEmail(user.getEmail());
-
             // Write new user
-            writeNewUser(user.getUid(), username, user.getEmail());
-
-            startActivity(new Intent(LoginActivity.this, MainActivity.class));
-            this.finish();
+            writeNewUser(user.getUid(), user.getDisplayName(), user.getEmail());
             ProgressBar progressB = findViewById(R.id.progressBar);
             progressB.setVisibility(View.VISIBLE);
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivityForResult(intent,1);
-        }
-    }
-
-    private String usernameFromEmail(String email) {
-        if (email.contains("@")) {
-            return email.split("@")[0];
-        } else {
-            return email;
         }
     }
 
@@ -188,7 +164,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if (i == R.id.sign_in_button) {
             signIn();
             ProgressBar progressB = findViewById(R.id.progressBar);
-            progressB.setVisibility(View.GONE);
+            progressB.setVisibility(GONE);
         }
     }
 }
