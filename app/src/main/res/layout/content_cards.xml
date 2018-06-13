@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -10,19 +10,15 @@
     tools:showIn="@layout/activity_cards">
 
 
-    <LinearLayout
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/NFC-Tags"
+        android:scrollbars="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:background="@color/colorAccent"
+        android:clipToPadding="true"
+        android:padding="8dp"
+        tools:listitem="@layout/tags_cards"/>
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/NFC-Tags"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:background="@color/colorAccent"
-            android:clipToPadding="false"
-            android:padding="8dp" />
-
-    </LinearLayout>
-</android.support.constraint.ConstraintLayout>
+</RelativeLayout>

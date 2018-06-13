@@ -12,15 +12,22 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import net.ictcampus.sutern.nfcreader.models.NFC_Tag;
+import net.ictcampus.sutern.nfcreader.models.User;
 
 import org.w3c.dom.Comment;
 
@@ -30,10 +37,11 @@ import java.util.List;
 public class cardsActivity extends AppCompatActivity {
 
 
+    private ArrayAdapter NfcListe;
     private static final String TAG = "cardAcivity";
     private DatabaseReference mNFCReference;
     private RecyclerView mNFCRecycler;
-    private RecyclerView.Adapter mAdapter;
+    private EditText mNameField;
 
 
     @Override
@@ -49,153 +57,198 @@ public class cardsActivity extends AppCompatActivity {
 
         mNFCRecycler.setLayoutManager(new LinearLayoutManager(this));
 
-        mAdapter = new RecyclerView.Adapter(this,  mNFCReference);
-        mNFCRecycler.setAdapter(mAdapter);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-
+            public void onClick(View v) {
+                int i = v.getId();
+                if (i == R.id.fab) {
+                    postComment();
+                }
             }
         });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-
     }
-    private static class NFC_TagRecycler extends RecyclerView.Adapter<NFC_TagRecycler> {
 
-        private Context mContext;
-        private DatabaseReference mDatabaseReference;
-        private ChildEventListener mChildEventListener;
+    public String getUid() {
+        return FirebaseAuth.getInstance().getCurrentUser().getUid();
+    }
 
-        private List<String> mCommentIds = new ArrayList<>();
-        private List<NFC_Tag> mComments = new ArrayList<>();
 
-        public NFC_TagRecycler(final Context context, DatabaseReference ref) {
-            mContext = context;
-            mDatabaseReference = ref;
 
-            // Create child event listener
-            // [START child_event_listener_recycler]
-            ChildEventListener childEventListener = new ChildEventListener() {
-                @Override
-                public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
-                    Log.d(TAG, "onChildAdded:" + dataSnapshot.getKey());
 
-                    // A new comment has been added, add it to the displayed list
-                    Comment comment = dataSnapshot.getValue(Comment.class);
+    private void postComment() {
+        final String uid = getUid();
+        FirebaseDatabase.getInstance().getReference().child("users").child(uid)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        // Get user information
+                        User user = dataSnapshot.getValue(User.class);
+                        String authorName = user.username;
 
-                    // [START_EXCLUDE]
-                    // Update RecyclerView
-                    mCommentIds.add(dataSnapshot.getKey());
-                    mComments.add(NFC_Tag);
-                    notifyItemInserted(mComments.size() - 1);
-                    // [END_EXCLUDE]
-                }
+                        // Create new comment object
+                        String commentText = mNameField.getText().toString();
+                        Comment comment = new NFC_Tag(NfcReader.getid(), commentText);
 
-                @Override
-                public void onChildChanged(DataSnapshot dataSnapshot, String previousChildName) {
-                    Log.d(TAG, "onChildChanged:" + dataSnapshot.getKey());
+                        // Push the comment, it will appear in the list
+                        mCommentsReference.push().setValue(comment);
 
-                    // A comment has changed, use the key to determine if we are displaying this
-                    // comment and if so displayed the changed comment.
-                    Comment newComment = dataSnapshot.getValue(Comment.class);
-                    String commentKey = dataSnapshot.getKey();
-
-                    // [START_EXCLUDE]
-                    int commentIndex = mCommentIds.indexOf(commentKey);
-                    if (commentIndex > -1) {
-                        // Replace with the new data
-                        mComments.set(commentIndex, newComment);
-
-                        // Update the RecyclerView
-                        notifyItemChanged(commentIndex);
-                    } else {
-                        Log.w(TAG, "onChildChanged:unknown_child:" + commentKey);
+                        // Clear the field
+                        mCommentField.setText(null);
                     }
-                    // [END_EXCLUDE]
-                }
 
-                @Override
-                public void onChildRemoved(DataSnapshot dataSnapshot) {
-                    Log.d(TAG, "onChildRemoved:" + dataSnapshot.getKey());
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
 
-                    // A comment has changed, use the key to determine if we are displaying this
-                    // comment and if so remove it.
-                    String commentKey = dataSnapshot.getKey();
-
-                    // [START_EXCLUDE]
-                    int commentIndex = mCommentIds.indexOf(commentKey);
-                    if (commentIndex > -1) {
-                        // Remove data from the list
-                        mCommentIds.remove(commentIndex);
-                        mComments.remove(commentIndex);
-
-                        // Update the RecyclerView
-                        notifyItemRemoved(commentIndex);
-                    } else {
-                        Log.w(TAG, "onChildRemoved:unknown_child:" + commentKey);
                     }
-                    // [END_EXCLUDE]
-                }
+                });
+    }
 
-                @Override
-                public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {
-                    Log.d(TAG, "onChildMoved:" + dataSnapshot.getKey());
+private static class NfcViewHolder extends RecyclerView.ViewHolder {
 
-                    // A comment has changed position, use the key to determine if we are
-                    // displaying this comment and if so move it.
-                    Comment movedComment = dataSnapshot.getValue(Comment.class);
-                    String commentKey = dataSnapshot.getKey();
+    public TextView authorView;
+    public TextView bodyView;
 
-                    // ...
-                }
+    public NfcViewHolder(View itemView) {
+        super(itemView);
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    Log.w(TAG, "postComments:onCancelled", databaseError.toException());
-                    Toast.makeText(mContext, "Failed to load comments.",
-                            Toast.LENGTH_SHORT).show();
-                }
-            };
-            ref.addChildEventListener(childEventListener);
-            // [END child_event_listener_recycler]
+        authorView = itemView.findViewById(R.id.text2);
+        bodyView = itemView.findViewById(R.id.text1);
+    }
+}
 
-            // Store reference to listener so it can be removed on app stop
-            mChildEventListener = childEventListener;
-        }
+private static class NfcAdapter extends RecyclerView.Adapter<NfcViewHolder> {
 
-        @Override
-        public NFC_TagRecycler onCreateViewHolder(ViewGroup parent, int viewType) {
-            LayoutInflater inflater = LayoutInflater.from(mContext);
-            View view = inflater.inflate(R.layout.item_comment, parent, false);
-            return new CommentViewHolder(view);
-        }
+    private Context mContext;
+    private DatabaseReference mDatabaseReference;
+    private ChildEventListener mChildEventListener;
 
-        @Override
-        public void onBindViewHolder(@NonNull NFC_TagRecycler holder, int position) {
+    private List<String> mCommentIds = new ArrayList<>();
+    private List<NFC_Tag> mComments = new ArrayList<>();
 
-        }
+    public NfcAdapter(final Context context, DatabaseReference ref) {
+        mContext = context;
+        mDatabaseReference = ref;
 
-        @Override
-        public void onBindViewHolder(CommentViewHolder holder, int position) {
-            Comment comment = mComments.get(position);
-            holder.authorView.setText(comment.author);
-            holder.bodyView.setText(comment.text);
-        }
+        // Create child event listener
+        // [START child_event_listener_recycler]
+        ChildEventListener childEventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
+                Log.d(TAG, "onChildAdded:" + dataSnapshot.getKey());
 
-        @Override
-        public int getItemCount() {
-            return mComments.size();
-        }
+                // A new comment has been added, add it to the displayed list
+                NFC_Tag tag = dataSnapshot.getValue(NFC_Tag.class);
 
-        public void cleanupListener() {
-            if (mChildEventListener != null) {
-                mDatabaseReference.removeEventListener(mChildEventListener);
+                // [START_EXCLUDE]
+                // Update RecyclerView
+                mCommentIds.add(dataSnapshot.getKey());
+                mComments.add(tag);
+                notifyItemInserted(mComments.size() - 1);
+                // [END_EXCLUDE]
             }
-        }
 
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String previousChildName) {
+                Log.d(TAG, "onChildChanged:" + dataSnapshot.getKey());
+
+                // A comment has changed, use the key to determine if we are displaying this
+                // comment and if so displayed the changed comment.
+                NFC_Tag newtag = dataSnapshot.getValue(NFC_Tag.class);
+                String commentKey = dataSnapshot.getKey();
+
+                // [START_EXCLUDE]
+                int commentIndex = mCommentIds.indexOf(commentKey);
+                if (commentIndex > -1) {
+                    // Replace with the new data
+                    mComments.set(commentIndex, newtag);
+
+                    // Update the RecyclerView
+                    notifyItemChanged(commentIndex);
+                } else {
+                    Log.w(TAG, "onChildChanged:unknown_child:" + commentKey);
+                }
+                // [END_EXCLUDE]
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                Log.d(TAG, "onChildRemoved:" + dataSnapshot.getKey());
+
+                // A comment has changed, use the key to determine if we are displaying this
+                // comment and if so remove it.
+                String commentKey = dataSnapshot.getKey();
+
+                // [START_EXCLUDE]
+                int commentIndex = mCommentIds.indexOf(commentKey);
+                if (commentIndex > -1) {
+                    // Remove data from the list
+                    mCommentIds.remove(commentIndex);
+                    mComments.remove(commentIndex);
+
+                    // Update the RecyclerView
+                    notifyItemRemoved(commentIndex);
+                } else {
+                    Log.w(TAG, "onChildRemoved:unknown_child:" + commentKey);
+                }
+                // [END_EXCLUDE]
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {
+                Log.d(TAG, "onChildMoved:" + dataSnapshot.getKey());
+
+                // A comment has changed position, use the key to determine if we are
+                // displaying this comment and if so move it.
+                Comment movedComment = dataSnapshot.getValue(Comment.class);
+                String commentKey = dataSnapshot.getKey();
+
+                // ...
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "postComments:onCancelled", databaseError.toException());
+                Toast.makeText(mContext, "Failed to load comments.",
+                        Toast.LENGTH_SHORT).show();
+            }
+        };
+        ref.addChildEventListener(childEventListener);
+        // [END child_event_listener_recycler]
+
+        // Store reference to listener so it can be removed on app stop
+        mChildEventListener = childEventListener;
     }
+
+    @Override
+    public NfcViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        LayoutInflater inflater = LayoutInflater.from(mContext);
+        View view = inflater.inflate(R.layout.tags_cards, parent, false);
+        return new NfcViewHolder(view);
+    }
+
+    @Override
+    public void onBindViewHolder(NfcViewHolder holder, int position) {
+        NFC_Tag nfc_tag = mComments.get(position);
+        holder.authorView.setText(nfc_tag.id);
+        holder.bodyView.setText(nfc_tag.name);
+    }
+
+    @Override
+    public int getItemCount() {
+        return mComments.size();
+    }
+
+    public void cleanupListener() {
+        if (mChildEventListener != null) {
+            mDatabaseReference.removeEventListener(mChildEventListener);
+        }
+    }
+
+}
+
 
 }
