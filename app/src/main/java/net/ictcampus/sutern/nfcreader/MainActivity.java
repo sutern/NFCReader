@@ -1,11 +1,14 @@
 package net.ictcampus.sutern.nfcreader;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -72,11 +75,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     Marker myCurrent;
 
-    /**
-     * on create methode
-     *
-     * @param savedInstanceState
-     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -135,7 +133,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
@@ -143,12 +140,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             startActivity(new Intent(MainActivity.this, SettingsActivity.class));
             return true;
@@ -160,42 +153,31 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        // Handle navigation view item clicks here.
         int id = item.getItemId();
-/*
+
         if (id == R.id.nav_addCard) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
 
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_contact) {
+            String[] to = {"sugla.consulting@gmail.com"};
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setData(Uri.parse("mailto:"));
+            intent.putExtra(Intent.EXTRA_EMAIL, to);
+            intent.putExtra(Intent.EXTRA_SUBJECT, "Feedback");
+            intent.setType("message/rfc822");
+            Intent chooser = Intent.createChooser(intent, "Send us Feedback");
+            startActivity(chooser);
 
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_about) {
+            startActivity(new Intent(MainActivity.this, AboutActivity.class));
+        } else if (id == R.id.nav_logout) {
+            Intent intent = new Intent();
+            setResult(1, intent);
+            this.finish();
+        } 
 
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }
-*/
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-
-
-    }
-
-
-    //Login
-    @Override
-    public void onLocationChanged(Location location) {
-        startLocationUpdates();
-        displayLocation();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        hideProgressDialog();
     }
 
     public void showProgressDialog() {
@@ -213,6 +195,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    @Override
+    public void onLocationChanged(Location location) {
+        startLocationUpdates();
+        displayLocation();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        hideProgressDialog();
+    }
+
+
+
     public void hideKeyboard(View view) {
         final InputMethodManager imn = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         if (imn != null) {
@@ -220,13 +216,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-
-    /**
-     * when the app has connected with google maps it starts the search for
-     * the location
-     *
-     * @param bundle
-     */
     @Override
     public void onConnected(@Nullable Bundle bundle) {
 
@@ -246,15 +235,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
-
-    /**
-     * starts the functions used to search the current location if the permission
-     * has been granted
-     *
-     * @param requestCode  the access that has been requested
-     * @param permissions  which permissions were granted
-     * @param grantResults used to check if the permission has been granted
-     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
@@ -272,9 +252,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
-    /**
-     * sets up the location with every methode
-     */
     private void setUpLocation() {
         if (android.support.v4.app.ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 android.support.v4.app.ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -291,9 +268,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    /**
-     * adds the location to the map and moves the camera
-     */
     private void displayLocation() {
         if (android.support.v4.app.ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 android.support.v4.app.ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -328,9 +302,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    /**
-     * creates a location request
-     */
     private void createLocationRequest() {
 
         mLocationRequest = new LocationRequest();
@@ -340,9 +311,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mLocationRequest.setSmallestDisplacement(DISPLACEMENT);
     }
 
-    /**
-     * makes a googleAPIClient and connects the client
-     */
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -351,11 +319,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mGoogleApiClient.connect();
     }
 
-    /**
-     * checks if the user has google play services
-     *
-     * @return returns true when the google play service is available
-     */
     private boolean checkPlayServices() {
         GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
         int resultCode = googleAPI.getInstance().isGooglePlayServicesAvailable(this);
@@ -376,9 +339,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
-    /**
-     * requests permission to access the gps
-     */
     private void requestRuntimePermission() {
         android.support.v4.app.ActivityCompat.requestPermissions(this, new String[]
                 {
@@ -388,9 +348,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }, MY_PERMISSION_REQUEST_CODE);
     }
 
-    /**
-     * updates the startLocation
-     */
     private void startLocationUpdates() {
         if (android.support.v4.app.ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 android.support.v4.app.ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -402,11 +359,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
-    /**
-     * sets the map to the mMap
-     *
-     * @param map the map on the xml file
-     */
     public void onMapReady(GoogleMap map) {
         mMap = map;
     }

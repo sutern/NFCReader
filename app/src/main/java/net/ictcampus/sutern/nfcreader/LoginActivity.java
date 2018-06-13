@@ -1,5 +1,6 @@
 package net.ictcampus.sutern.nfcreader;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -39,6 +40,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        ProgressBar progressB = findViewById(R.id.progressBar);
+        progressB.setVisibility(GONE);
         mAuth = FirebaseAuth.getInstance();
 
         findViewById(R.id.sign_in_button).setOnClickListener(this);
@@ -53,7 +56,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         mAuth = FirebaseAuth.getInstance();
     }
-
 
     @Override
     public void onStart() {
@@ -76,6 +78,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 Log.v(TAG, "Google sign in failed", e);
                 updateUI(null);
             }
+        }
+        if (requestCode == 1){
+            mAuth.signOut();
+
+            mGoogleSignInClient.signOut().addOnCompleteListener(this,
+                    new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            updateUI(null);
+
+                        }
+                    });
+            finish();
         }
     }
 
@@ -105,6 +120,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
+
     private void signOut() {
         mAuth.signOut();
 
@@ -131,8 +147,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private void updateUI(FirebaseUser user) {
         if (user != null) {
-            startActivity(new Intent(LoginActivity.this, MainActivity.class));
-            this.finish();
+            ProgressBar progressB = findViewById(R.id.progressBar);
+            progressB.setVisibility(View.VISIBLE);
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivityForResult(intent,1);
         }
     }
 
@@ -141,6 +159,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         int i = v.getId();
         if (i == R.id.sign_in_button) {
             signIn();
+            ProgressBar progressB = findViewById(R.id.progressBar);
+            progressB.setVisibility(View.GONE);
         }
     }
 }

@@ -23,4 +23,18 @@
     <string name="see_history">See history</string>
     <string name="your_location">your location</string>
     <string name="about">About</string>
+    <string name="logout">Logout</string>
+    <string name="title_activity_about">About</string>
+    <string name="large_text">
+        Welcome, thanks for choosing our  Application.
+        Here"'"s a quick Guide to start right into the action. As you
+        already recognised you need to have a Google account
+        in order to use this App. On the main page you can see
+        when and where you scanned your NFC-Chip or card.
+        You can open the menu by pressing the button in the
+        top left corner, or you can just slide from left to right. in
+        this menu you can add a card or chip to your account,
+        you can contact us per E-Mail if there are any bugs, questions or you just
+        want to send a feedback.
+    </string>
 </resources>
