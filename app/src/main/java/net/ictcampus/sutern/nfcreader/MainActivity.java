@@ -173,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             Intent intent = new Intent();
             setResult(1, intent);
             this.finish();
-        } 
+        }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -216,6 +216,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+
+    /**
+     * when the app has connected with google maps it starts the search for
+     * the location
+     *
+     * @param bundle
+     */
     @Override
     public void onConnected(@Nullable Bundle bundle) {
 
@@ -235,6 +242,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
+
+    /**
+     * starts the functions used to search the current location if the permission
+     * has been granted
+     *
+     * @param requestCode  the access that has been requested
+     * @param permissions  which permissions were granted
+     * @param grantResults used to check if the permission has been granted
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
@@ -252,6 +268,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
+    /**
+     * sets up the location with every methode
+     */
     private void setUpLocation() {
         if (android.support.v4.app.ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 android.support.v4.app.ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -268,6 +287,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    /**
+     * adds the location to the map and moves the camera
+     */
     private void displayLocation() {
         if (android.support.v4.app.ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 android.support.v4.app.ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -302,6 +324,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    /**
+     * creates a location request
+     */
     private void createLocationRequest() {
 
         mLocationRequest = new LocationRequest();
@@ -311,6 +336,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mLocationRequest.setSmallestDisplacement(DISPLACEMENT);
     }
 
+    /**
+     * makes a googleAPIClient and connects the client
+     */
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -319,6 +347,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mGoogleApiClient.connect();
     }
 
+    /**
+     * checks if the user has google play services
+     *
+     * @return returns true when the google play service is available
+     */
     private boolean checkPlayServices() {
         GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
         int resultCode = googleAPI.getInstance().isGooglePlayServicesAvailable(this);
@@ -339,6 +372,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
+    /**
+     * requests permission to access the gps
+     */
     private void requestRuntimePermission() {
         android.support.v4.app.ActivityCompat.requestPermissions(this, new String[]
                 {
@@ -348,6 +384,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }, MY_PERMISSION_REQUEST_CODE);
     }
 
+    /**
+     * updates the startLocation
+     */
     private void startLocationUpdates() {
         if (android.support.v4.app.ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 android.support.v4.app.ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -359,6 +398,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
+    /**
+     * sets the map to the mMap
+     *
+     * @param map the map on the xml file
+     */
     public void onMapReady(GoogleMap map) {
         mMap = map;
     }

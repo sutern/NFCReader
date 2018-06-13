@@ -2,7 +2,7 @@
 <resources>
     <string name="action_settings">Einstellungen</string>
     <string name="password">Passwort</string>
-    <string name="add_card">Neue Karte hinzufügen</string>
+    <string name="add_card">Meine Karten anzeigen</string>
     <string name="contact">Kontaktieren</string>
     <string name="share">Teilen</string>
     <string name="send">Senden</string>

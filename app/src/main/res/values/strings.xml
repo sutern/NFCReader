@@ -9,7 +9,7 @@
     <string name="title_activity_login">Sign in</string>
     <string name="logintext">Sign in with Google below</string>
     <string name="password">Password</string>
-    <string name="add_card">Add new card</string>
+    <string name="add_card">see my cards</string>
     <string name="contact">Contact</string>
     <string name="communicate">Social</string>
     <string name="share">Share</string>
@@ -37,4 +37,5 @@
         you can contact us per E-Mail if there are any bugs, questions or you just
         want to send a feedback.
     </string>
+    <string name="title_activity_cards">cardsActivity</string>
 </resources>
