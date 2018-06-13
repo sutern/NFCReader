@@ -9,7 +9,7 @@
     <string name="title_activity_login">Sign in</string>
     <string name="logintext">Sign in with Google below</string>
     <string name="password">Password</string>
-    <string name="add_card">Add new card</string>
+    <string name="add_card">see my cards</string>
     <string name="contact">Contact</string>
     <string name="communicate">Social</string>
     <string name="share">Share</string>
@@ -23,4 +23,5 @@
     <string name="see_history">See history</string>
     <string name="your_location">your location</string>
     <string name="about">About</string>
+    <string name="title_activity_cards">cardsActivity</string>
 </resources>
