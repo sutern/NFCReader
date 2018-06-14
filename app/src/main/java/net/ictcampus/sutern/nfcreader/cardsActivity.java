@@ -1,19 +1,28 @@
 package net.ictcampus.sutern.nfcreader;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.nfc.NfcAdapter;
+import android.nfc.Tag;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -32,19 +41,24 @@ import net.ictcampus.sutern.nfcreader.models.User;
 
 import org.w3c.dom.Comment;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
 public class cardsActivity extends AppCompatActivity {
 
 
-    AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
     private ArrayAdapter NfcListe;
     private static final String TAG = "cardAcivity";
     private DatabaseReference mNFCReference;
     private RecyclerView mNFCRecycler;
     private EditText mNameField;
+    NFCForegroundUtil nfcForegroundUtil = null;
+    private String m_Text = "";
+    Context context;
+    private NfcAdapter mAdapter;
 
+    boolean isUsed = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,25 +67,33 @@ public class cardsActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        alertDialog.setTitle("PASSWORD");
-        alertDialog.setMessage("Enter Password");
+        mNFCReference = FirebaseDatabase.getInstance().getReference().child("users").child(getUid()).child("NFC-Tags");
 
-        mNFCReference = FirebaseDatabase.getInstance().getReference().child("user").child("NFC-Tags");
 
         mNFCRecycler = findViewById(R.id.NFC_Tags);
 
         mNFCRecycler.setLayoutManager(new LinearLayoutManager(this));
 
+        mAdapter = new NfcAdapter(this, mNFCReference);
+        mNFCRecycler.setAdapter(mAdapter);
+
+        final EditText txtUrl = new EditText(this);
+
+
+        nfcForegroundUtil = new NFCForegroundUtil(this);
+
+        context = this;
+
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                int i = v.getId();
-                if (i == R.id.fab) {
-                    postComment();
-                }
+            public void onClick(final View v) {
+
+                Snackbar.make(v, R.string.snackbar_info, Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
             }
+
         });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -81,49 +103,139 @@ public class cardsActivity extends AppCompatActivity {
         return FirebaseAuth.getInstance().getCurrentUser().getUid();
     }
 
-/*
+
     private void postComment() {
+
+    }
+
+    public void onPause() {
+        super.onPause();
+        nfcForegroundUtil.disableForeground();
+    }
+
+    public void onResume() {
+        super.onResume();
+        nfcForegroundUtil.enableForeground();
+        if (!android.nfc.NfcAdapter.getDefaultAdapter(this.getApplicationContext()).isEnabled()) {
+            Toast.makeText(getApplicationContext(), R.string.Warning_NFC_turned_off, Toast.LENGTH_LONG).show();
+            startActivity(new Intent(android.provider.Settings.ACTION_NFC_SETTINGS));
+
+        }
+
+
+    }
+
+    public void onNewIntent(Intent intent) {
+        final Tag tag = intent.getParcelableExtra(android.nfc.NfcAdapter.EXTRA_TAG);
         final String uid = getUid();
         FirebaseDatabase.getInstance().getReference().child("users").child(uid)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        // Get user information
-                        User user = dataSnapshot.getValue(User.class);
-                        String authorName = user.username;
 
-                        // Create new comment object
-                        String name = mNameField.getText().toString();
-                        NFC_Tag tag = new NFC_Tag(NfcReader.getid(), name);
+                        AlertDialog.Builder builder;
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            builder = new AlertDialog.Builder(context, android.R.style.Theme_Material_Dialog);
+                        } else {
+                            builder = new AlertDialog.Builder(context);
+                        }
+                        mNameField = new EditText(context);
+                        builder.setView(mNameField);
 
-                        // Push the comment, it will appear in the list
-                        mNFCReference.push().setValue(tag);
+                        builder.setTitle("Name")
 
-                        // Clear the field
-                        mNameField.setText(null);
+                                .setMessage(R.string.Message_Alert_add)
+                                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+
+                                        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+                                        DatabaseReference userNameRef = rootRef.child("users").child(uid);
+                                        final String id = ByteArrayToHexString(tag.getId());
+                                        final ArrayList<String> ids = new ArrayList<String>();
+                                        ValueEventListener eventListener = new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                                for (DataSnapshot iterablesnapshot : dataSnapshot.getChildren()) {
+                                                    String id_db = iterablesnapshot.child("id").getValue().toString();
+                                                    if (id == id_db) {
+                                                        isUsed = true;
+                                                    }
+
+                                                }
+                                                if (!isUsed) {
+                                                    String Name = mNameField.getText().toString();
+
+
+                                                    NFC_Tag tag = new NFC_Tag(id, Name);
+
+                                                    // Push the comment, it will appear in the list
+                                                    mNFCReference.push().setValue(tag);
+
+                                                    isUsed = false;
+                                                } else {
+                                                    Toast.makeText(context, R.string.card_used, Toast.LENGTH_LONG).show();
+
+                                                    isUsed = false;
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(DatabaseError databaseError) {
+                                            }
+                                        };
+
+
+                                    }
+                                })
+                                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+
+                                    }
+                                })
+                                .setIcon(R.drawable.ic_dialog_add
+                                );
+
+                        mNameField = new EditText(context);
+                        builder.setView(mNameField);
+                        builder.show();
+
                     }
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
 
                     }
-                });*/
+                });
+
     }
+
+    private String ByteArrayToHexString(byte[] inarray) {
+        int i, j, in;
+        String[] hex = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F"};
+        String out = "";
+        for (j = 0; j < inarray.length; ++j) {
+            in = (int) inarray[j] & 0xff;
+            i = (in >> 4) & 0x0f;
+            out += hex[i];
+            i = in & 0x0f;
+            out += hex[i];
+        }
+        return out;
+    }
+
 
     private static class NfcViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView authorView;
         public TextView bodyView;
 
         public NfcViewHolder(View itemView) {
             super(itemView);
 
-            authorView = itemView.findViewById(R.id.text2);
-            bodyView = itemView.findViewById(R.id.text1);
+            bodyView = itemView.findViewById(R.id.text_info);
         }
     }
 
-    class NfcAdapter extends RecyclerView.Adapter<NfcViewHolder> {
+    private static class NfcAdapter extends RecyclerView.Adapter<NfcViewHolder> {
 
         private Context mContext;
         private DatabaseReference mDatabaseReference;
@@ -237,8 +349,7 @@ public class cardsActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(NfcViewHolder holder, int position) {
             NFC_Tag nfc_tag = mComments.get(position);
-            holder.authorView.setText(nfc_tag.id);
-            holder.bodyView.setText(nfc_tag.name);
+            holder.bodyView.setText("Name: " + nfc_tag.name + "\n" + "ID: " + nfc_tag.id);
         }
 
         @Override
@@ -252,11 +363,12 @@ public class cardsActivity extends AppCompatActivity {
             }
         }
 
-    }
 
+    }
 }
 
 
+/*
 
 final EditText input = new EditText(MainActivity.this);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
@@ -295,4 +407,4 @@ public void onClick(DialogInterface dialog, int which) {
         alertDialog.show();
         }
 
-        });
+        });*/

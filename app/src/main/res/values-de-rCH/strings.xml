@@ -3,7 +3,7 @@
     <string name="action_settings">Einstellungen</string>
     <string name="password">Passwort</string>
     <string name="add_card">Meine Karten anzeigen</string>
-    <string name="contact">Kontaktieren</string>
+    <string name="contact">Kontakt</string>
     <string name="share">Teilen</string>
     <string name="send">Senden</string>
     <string name="firebase_status_fmt">Firebase Benutzer: %s</string>
@@ -17,4 +17,10 @@
     <string name="communicate">Sozial</string>
     <string name="your_location">Ihr Standort</string>
     <string name="about">Über</string>
+    <string name="Warning_NFC_turned_off">Ihr NFC ist deaktiviert. Drücken sie zurück, um zu der APP zu gelangen, wenn sie NFC eingeschalten haben</string>
+    <string name="hint_name">Name für den Tag</string>
+    <string name="title_activity_cards">Ihre Karten</string>
+    <string name="snackbar_info">Halten sie Ihre Karte an die Rückseite Ihres Gerätes, um sie hinzuzufügen</string>
+    <string name="Message_Alert_add">Bitte geben sie einen Namen für die Karte ein</string>
+    <string name="card_used">Diese Karte wurde schon eingetragen</string>
 </resources>
