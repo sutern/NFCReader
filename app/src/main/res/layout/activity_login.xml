@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimary"
     tools:context=".LoginActivity"
     android:id="@+id/mainLayout"
     android:padding="15dp">
@@ -22,11 +21,10 @@
             android:layout_height="50dp"
             android:layout_alignParentTop="true"
             android:layout_marginTop="154dp"
-            android:background="@color/colorPrimary"
             android:text="@string/logintext"
             android:textAlignment="center"
             android:textAllCaps="true"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/colorStrawberryAccent"
             android:textSize="20sp" />
 
         <View
@@ -50,7 +48,7 @@
             android:layout_width="128dp"
             android:layout_height="128dp"
             android:layout_centerHorizontal="true"
-            app:srcCompat="@drawable/imglogo" />
+            app:srcCompat="@drawable/ic_nfc_logo" />
 
         <ProgressBar
             android:id="@+id/progressBar"
@@ -58,6 +56,5 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true" />
-
     </RelativeLayout>
 </android.support.constraint.ConstraintLayout>

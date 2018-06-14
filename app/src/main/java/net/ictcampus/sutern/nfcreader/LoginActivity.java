@@ -31,7 +31,7 @@ import net.ictcampus.sutern.nfcreader.models.User;
 
 import static android.view.View.GONE;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
+public class LoginActivity extends parentClass implements View.OnClickListener {
 
 
     private static final String TAG = "GoogleActivity";
@@ -44,6 +44,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(getColor());
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
@@ -115,7 +116,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             updateUI(user);
                         } else {
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
-                            Snackbar.make(findViewById(R.id.mainLayout), "Authentication Failed.", Snackbar.LENGTH_SHORT).show();
+                            Snackbar.make(findViewById(R.id.mainLayout), R.string.offline, Snackbar.LENGTH_LONG).show();
                             updateUI(null);
                         }
                     }
@@ -147,6 +148,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             progressB.setVisibility(View.VISIBLE);
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivityForResult(intent,1);
+
         }
     }
 

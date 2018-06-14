@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimary"
     tools:context=".cardsActivity">
 
     <android.support.design.widget.AppBarLayout
@@ -17,7 +16,6 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/colorPrimary"
             app:elevation="0dp"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
@@ -31,8 +29,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        android:background="@color/colorPrimaryDark"
-        android:backgroundTint="@color/colorPrimaryDark"
+        android:background="@color/colorStrawberryAccent"
+        android:backgroundTint="@color/colorStrawberryAccent"
         app:srcCompat="@drawable/ic_dialog_add" />
 
 </android.support.design.widget.CoordinatorLayout>

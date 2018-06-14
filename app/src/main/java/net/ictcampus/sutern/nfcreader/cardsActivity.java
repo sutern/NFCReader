@@ -1,4 +1,4 @@
-package net.ictcampus.sutern.nfcreader;
+/*package net.ictcampus.sutern.nfcreader;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -107,7 +107,7 @@ public class cardsActivity extends AppCompatActivity {
                     public void onCancelled(DatabaseError databaseError) {
 
                     }
-                });*/
+                });
     }
 
     private static class NfcViewHolder extends RecyclerView.ViewHolder {
@@ -295,4 +295,4 @@ public void onClick(DialogInterface dialog, int which) {
         alertDialog.show();
         }
 
-        });
+        });*/

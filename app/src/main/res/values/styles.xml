@@ -1,26 +1,38 @@
 <resources>
-
-    <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:colorBackground">@color/colorPrimaryDark</item>
+        <item name="colorPrimary">@color/colorStrawberryPrimary</item>
+        <item name="colorPrimaryDark">@color/colorStrawberryPrimaryDark</item>
+        <item name="colorAccent">@color/colorStrawberryAccent</item>
+        <item name="android:colorBackground">@color/colorStrawberryPrimaryDark</item>
+        <item name="windowNoTitle">true</item>
     </style>
 
-
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-    <style name="ThemeOverlay.MyTextDetail" parent="AppTheme">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:fadeScrollbars">true</item>
-        <item name="android:gravity">center</item>
-        <item name="android:maxLines">5</item>
-        <item name="android:padding">4dp</item>
-        <item name="android:scrollbars">vertical</item>
-        <item name="android:textSize">14sp</item>
+    <style name="BlueTheme" parent="AppTheme">
+        <item name="colorPrimary">@color/colorBlueberryPrimary</item>
+        <item name="colorPrimaryDark">@color/colorBlueberryPrimaryDark</item>
+        <item name="android:colorBackground">@color/colorBlueberryPrimaryDark</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="GreenTheme" parent="AppTheme">
+        <item name="colorPrimary">@color/colorKiwiPrimary</item>
+        <item name="colorPrimaryDark">@color/colorKiwiPrimaryDark</item>
+        <item name="android:colorBackground">@color/colorKiwiPrimaryDark</item>
+        <item name="windowNoTitle">true</item>    </style>
+
+    <style name="YellowTheme" parent="AppTheme">
+        <item name="colorPrimary">@color/colorHoneyPrimary</item>
+        <item name="colorPrimaryDark">@color/colorHoneyPrimaryDark</item>
+        <item name="android:colorBackground">@color/colorHoneyPrimaryDark</item>
+        <item name="windowNoTitle">true</item>    </style>
+
+    <style name="OrangeTheme" parent="AppTheme">
+        <item name="colorPrimary">@color/colorClementinePrimary</item>
+        <item name="colorPrimaryDark">@color/colorClementinePrimaryDark</item>
+        <item name="android:colorBackground">@color/colorClementinePrimaryDark</item>
+        <item name="windowNoTitle">true</item>
     </style>
 </resources>

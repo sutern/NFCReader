@@ -1,8 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#A6001B</color>
-    <color name="colorPrimaryDark">#900010</color>
-    <color name="colorAccent">#FFFFFF</color>
-    <color name="colorBackground">#A6001B</color>
-    <color name="colorText">#FFFFFF</color>
+    <color name="black">#000000</color>
+
+    <color name="colorStrawberryPrimary">#A6001B</color>
+    <color name="colorStrawberryPrimaryDark">#900010</color>
+    <color name="colorStrawberryAccent">#FFFFFF</color>
+    <color name="colorStrawberryText">#FFFFFF</color>
+
+    <color name="colorBlueberryPrimary">#4f86f7</color>
+    <color name="colorBlueberryPrimaryDark">#2263E2</color>
+
+    <color name="colorKiwiPrimary">#B3C766</color>
+    <color name="colorKiwiPrimaryDark">#8A9B49</color>
+
+    <color name="colorHoneyPrimary">#EBF113</color>
+    <color name="colorHoneyPrimaryDark">#D2D713</color>
+
+    <color name="colorClementinePrimary">#EB5E00</color>
+    <color name="colorClementinePrimaryDark">#B44F0B</color>
 </resources>
