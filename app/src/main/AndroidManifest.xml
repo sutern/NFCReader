@@ -34,8 +34,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SettingsActivity"
-            android:parentActivityName=".MainActivity" />
+            android:name=".SettingsActivity"/>
         <activity
             android:name=".cardsActivity"
             android:label="@string/title_activity_cards"
@@ -45,6 +44,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.ictcampus.sutern.nfcreader.MainActivity" />
         </activity>
+        <activity
+            android:name=".AboutActivity"
+            android:label="@string/about"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

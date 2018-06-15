@@ -3,12 +3,10 @@ package net.ictcampus.sutern.nfcreader;
 import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.nfc.Tag;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,7 +14,6 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -24,7 +21,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -44,15 +40,20 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import org.w3c.dom.Text;
+
+import java.util.Objects;
+import com.google.firebase.auth.FirebaseAuth;
 import net.ictcampus.sutern.nfcreader.models.NFC_Location;
-import net.ictcampus.sutern.nfcreader.models.NFC_Tag;
 
 import java.util.ArrayList;
 
@@ -60,7 +61,7 @@ import java.util.ArrayList;
  * @author glausla
  * @author sutern
  */
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback,
+public class MainActivity extends parentClass implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
@@ -92,6 +93,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     NFCForegroundUtil nfcForegroundUtil = null;
 
+    private DatabaseReference mDatabase;
+
+    private String userid = FirebaseAuth.getInstance().getUid();
+
+    private DatabaseReference db = FirebaseDatabase.getInstance().getReference().child("users").child(userid);
+    private Query getInfoFromDB = db;
+
+
+
     Marker myCurrent;
 
     Context context;
@@ -103,8 +113,34 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(getColor());
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("users");
+
+
+        getInfoFromDB.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String email = Objects.requireNonNull(dataSnapshot.child("email").getValue()).toString();
+                String name = Objects.requireNonNull(dataSnapshot.child("username").getValue()).toString();
+
+                NavigationView nv = (NavigationView) findViewById(R.id.nav_view);
+                View hv = nv.getHeaderView(0);
+                TextView txtUsername = (TextView) hv.findViewById(R.id.username);
+                TextView txtEmail = (TextView) hv.findViewById(R.id.useremail);
+
+                txtUsername.setText(name);
+                txtEmail.setText(email);
+
+                Snackbar.make(findViewById(R.id.drawer_layout),"Welcome " + name, Snackbar.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
         context = this;
 
@@ -253,7 +289,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            finishAffinity();
         }
     }
 
@@ -275,6 +311,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+            this.finish();
             return true;
         }
 
@@ -291,27 +328,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             startActivity(new Intent(MainActivity.this, cardsActivity.class));
             return true;
         }
+         else if (id == R.id.nav_contact) {
+            String[] to = {"sugla.consulting@gmail.com"};
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setData(Uri.parse("mailto:"));
+            intent.putExtra(Intent.EXTRA_EMAIL, to);
+            intent.putExtra(Intent.EXTRA_SUBJECT, "Feedback");
+            intent.setType("message/rfc822");
+            Intent chooser = Intent.createChooser(intent, "Send us Feedback");
+            startActivity(chooser);
 
+        } else if (id == R.id.nav_about) {
+            startActivity(new Intent(MainActivity.this, AboutActivity.class));
+        } else if (id == R.id.nav_logout) {
+            Intent intent = new Intent();
+            setResult(1, intent);
+            finish();
+        }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-
-
-    }
-
-
-    //Login
-    @Override
-    public void onLocationChanged(Location location) {
-        startLocationUpdates();
-        displayLocation();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        hideProgressDialog();
     }
 
     public void showProgressDialog() {
@@ -328,6 +365,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             mProgressDialog.dismiss();
         }
     }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        startLocationUpdates();
+        displayLocation();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        hideProgressDialog();
+    }
+
+
 
     public void hideKeyboard(View view) {
         final InputMethodManager imn = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);

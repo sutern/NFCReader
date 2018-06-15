@@ -1,28 +1,43 @@
 <resources>
-    <string name="app_name" translatable="false">NFCReader</string>
+    <string name="app_name" translatable="false">NFCR</string>
     <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
     <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
     <string name="nav_header_title" translatable="false">Android Studio</string>
-    <string name="nav_header_subtitle" translatable="false">android.studio@android.com</string>
-    <string name="nav_header_desc" translatable="false">Navigation header</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_login">Sign in</string>
     <string name="logintext">Sign in with Google below</string>
-    <string name="password">Password</string>
-    <string name="add_card">see my cards</string>
+    <string name="add_card">See my cards</string>
     <string name="contact">Contact</string>
-    <string name="communicate">Social</string>
-    <string name="share">Share</string>
-    <string name="send">Send</string>
-    <string name="firebase_status_fmt">Firebase User: %s</string>
-    <string name="google_status_fmt">Google User: %s</string>
-    <string name="signed_out">Signed Out</string>
     <string name="loading">Loading…</string>
     <string name="sign_out">Sign out</string>
     <string name="google_maps" translatable="false">Google Maps</string>
     <string name="see_history">See history</string>
-    <string name="your_location">your location</string>
+    <string name="your_location">Your location</string>
     <string name="about">About</string>
+    <string name="logout">Logout</string>
+    <string name="about_text">
+        Welcome, thanks for choosing our  Application.
+        Here"'"s a quick Guide to start right into the action. As you
+        already recognised you need to have a Google account
+        in order to use this App. On the main page you can see
+        when and where you scanned your NFC-Chip or card.
+        You can open the menu by pressing the button in the
+        top left corner, or you can just slide from left to right. in
+        this menu you can add a card or chip to your account,
+        you can contact us per E-Mail if there are any bugs, questions or you just
+        want to send feedback. In order to read a NFC-
+        Tag, you need to hold the card close to
+        the backside of your phone. \n \n
+        This APP is a project by SuGla \n
+        Consulting.
+    </string>
+    <string name="offline">Your device is currently offline</string>
+    <string name="red_theme">Strawberry</string>
+    <string name="settings">Settings</string>
+    <string name="blue_theme">Blueberry</string>
+    <string name="green_theme">Kiwi</string>
+    <string name="yellow_theme">Honey</string>
+    <string name="orange_theme">Clementine</string>
+    <string name="apply">Apply</string>
     <string name="title_activity_cards">Your cards</string>
     <string name="Warning_NFC_turned_off">Your NFC is disabled. Press back when you enabled it.</string>
     <string name="hint_name">Name for the Tag</string>

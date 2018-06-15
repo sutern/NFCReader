@@ -4,6 +4,94 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="10dp"
     tools:context=".SettingsActivity">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="4dp"
+        tools:layout_editor_absoluteY="0dp"
+        tools:ignore="MissingConstraints">
+
+        <TextView
+            android:id="@+id/txtSettings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="22dp"
+            android:text="@string/settings"
+            android:textColor="@color/colorStrawberryText"
+            android:textSize="24sp" />
+
+        <RadioGroup
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true">
+
+            <RadioButton
+                android:id="@+id/strawberry"
+                android:layout_width="119dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="104dp"
+                android:buttonTint="@color/colorStrawberryText"
+                android:checked="true"
+                android:text="@string/red_theme"
+                android:textColor="@color/colorStrawberryText" />
+
+            <RadioButton
+                android:id="@+id/blueberry"
+                android:layout_width="119dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/strawberry"
+                android:layout_centerHorizontal="true"
+                android:buttonTint="@color/colorStrawberryText"
+                android:text="@string/blue_theme"
+                android:textColor="@color/colorStrawberryText" />
+
+            <RadioButton
+                android:id="@+id/kiwi"
+                android:layout_width="119dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/blueberry"
+                android:layout_centerHorizontal="true"
+                android:buttonTint="@color/colorStrawberryText"
+                android:text="@string/green_theme"
+                android:textColor="@color/colorStrawberryText" />
+
+            <RadioButton
+                android:id="@+id/honey"
+                android:layout_width="119dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/kiwi"
+                android:layout_centerHorizontal="true"
+                android:buttonTint="@color/colorStrawberryText"
+                android:text="@string/yellow_theme"
+                android:textColor="@color/colorStrawberryText" />
+
+            <RadioButton
+                android:id="@+id/clementine"
+                android:layout_width="119dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/honey"
+                android:layout_centerInParent="true"
+                android:buttonTint="@color/colorStrawberryText"
+                android:text="@string/orange_theme"
+                android:textColor="@color/colorStrawberryText" />
+
+        </RadioGroup>
+
+        <Button
+            android:id="@+id/apply"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="41dp"
+            android:background="@color/colorStrawberryAccent"
+            android:text="@string/apply" />
+    </RelativeLayout>
 </android.support.constraint.ConstraintLayout>

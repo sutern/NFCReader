@@ -1,12 +1,16 @@
 package net.ictcampus.sutern.nfcreader;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -28,7 +32,10 @@ import com.google.firebase.database.ValueEventListener;
 
 import net.ictcampus.sutern.nfcreader.models.User;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
+import static android.view.View.GONE;
+
+public class LoginActivity extends parentClass implements View.OnClickListener {
+
 
     private static final String TAG = "GoogleActivity";
     private static final int RC_SIGN_IN = 9001;
@@ -40,10 +47,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(getColor());
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-
+        ProgressBar progressB = findViewById(R.id.progressBar);
+        progressB.setVisibility(GONE);
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
 
@@ -60,7 +69,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mAuth = FirebaseAuth.getInstance();
     }
 
+    @Override
+    public void onResume(){
+        super.onResume();
 
+        ProgressBar progressB = findViewById(R.id.progressBar);
+        progressB.setVisibility(GONE);
+    }
     @Override
     public void onStart() {
         super.onStart();
@@ -83,6 +98,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 updateUI(null);
             }
         }
+        if (requestCode == 1){
+            signOut();
+        }
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
@@ -99,7 +117,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             updateUI(user);
                         } else {
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
-                            Snackbar.make(findViewById(R.id.mainLayout), "Authentication Failed.", Snackbar.LENGTH_SHORT).show();
+                            Snackbar.make(findViewById(R.id.mainLayout), R.string.offline, Snackbar.LENGTH_LONG).show();
                             updateUI(null);
                         }
                     }
@@ -119,24 +137,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         updateUI(null);
-
-                    }
-                });
-    }
-
-    private void revokeAccess() {
-        mAuth.signOut();
-        mGoogleSignInClient.revokeAccess().addOnCompleteListener(this,
-                new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        updateUI(null);
                     }
                 });
     }
 
     private void updateUI(final FirebaseUser user) {
         if (user != null) {
+            // Write new user
+            writeNewUser(user.getUid(), user.getDisplayName(), user.getEmail());
+            ProgressBar progressB = findViewById(R.id.progressBar);
+            progressB.setVisibility(View.VISIBLE);
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivityForResult(intent,1);
 
             DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
             DatabaseReference userNameRef = rootRef.child("users").child(user.getUid());
@@ -144,7 +156,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if(!dataSnapshot.exists()) {
-                        String username = usernameFromEmail(user.getEmail());
+                        String username = user.getDisplayName();
 
                         // Write new user
                         writeNewUser(user.getUid(), username, user.getEmail());
@@ -157,16 +169,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
 
 
-            startActivity(new Intent(LoginActivity.this, MainActivity.class));
-            this.finish();
-        }
-    }
-
-    private String usernameFromEmail(String email) {
-        if (email.contains("@")) {
-            return email.split("@")[0];
-        } else {
-            return email;
         }
     }
 
@@ -183,6 +185,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         int i = v.getId();
         if (i == R.id.sign_in_button) {
             signIn();
+            ProgressBar progressB = findViewById(R.id.progressBar);
+            progressB.setVisibility(GONE);
         }
     }
 }
