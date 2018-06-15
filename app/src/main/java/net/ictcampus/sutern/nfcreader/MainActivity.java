@@ -6,8 +6,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.Uri;
 import android.nfc.Tag;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,6 +18,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -48,6 +51,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+
+import net.ictcampus.sutern.nfcreader.models.NFC_Location;
+
 import java.util.Objects;
 
 /**
@@ -59,13 +65,19 @@ public class MainActivity extends parentClass implements NavigationView.OnNaviga
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
 
+    String id_db;
+
     public ProgressDialog mProgressDialog;
+
+    private boolean isUsed = false;
+
     private static final int MY_PERMISSION_REQUEST_CODE = 11;
     private GoogleMap mMap;
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 10;
     private Location mLastLocation;
     private FusedLocationProviderClient mFusedLocationClient;
     double latitude, longitude;
+    String name;
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
     private static int UPDATE_INTERVAL = 5000;
@@ -77,8 +89,10 @@ public class MainActivity extends parentClass implements NavigationView.OnNaviga
     private DatabaseReference mDatabase;
     private String userid = FirebaseAuth.getInstance().getUid();
     private DatabaseReference db = FirebaseDatabase.getInstance().getReference().child("users").child(userid);
+    private DatabaseReference db = FirebaseDatabase.getInstance().getReference().child("users").child(getUid());
     private Query getInfoFromDB = db;
     Marker myCurrent;
+    Context context;
 
     /**
      * on create methode
@@ -91,6 +105,15 @@ public class MainActivity extends parentClass implements NavigationView.OnNaviga
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mDatabase = FirebaseDatabase.getInstance().getReference().child("users");
+        findViewById(R.id.history).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, MapsActivity.class));
+            }
+        });
+
+
+        mNFCReference = mDatabase.child(getUid()).child("NFC-Tags");
 
         getInfoFromDB.addValueEventListener(new ValueEventListener() {
             @Override
@@ -115,6 +138,7 @@ public class MainActivity extends parentClass implements NavigationView.OnNaviga
             }
         });
 
+        context = this;
 
         nfcForegroundUtil = new NFCForegroundUtil(this);
 
@@ -125,7 +149,6 @@ public class MainActivity extends parentClass implements NavigationView.OnNaviga
 
             @Override
             public void onLocationResult(LocationResult locationResult) {
-                Log.d("Info", "INfo");
 
                 if (locationResult.getLastLocation() == null) {
                     return;
@@ -159,56 +182,79 @@ public class MainActivity extends parentClass implements NavigationView.OnNaviga
 
     public void onNewIntent(Intent intent) {
         final Tag tag = intent.getParcelableExtra(android.nfc.NfcAdapter.EXTRA_TAG);
-        /*final String uid = getUid();
+        final String uid = getUid();
+        final String id = ByteArrayToHexString(tag.getId());
         FirebaseDatabase.getInstance().getReference().child("users").child(uid)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
 
-                        AlertDialog.Builder builder;
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            builder = new AlertDialog.Builder(context, android.R.style.Theme_Material_Dialog);
-                        } else {
-                            builder = new AlertDialog.Builder(context);
-                        }
-                        mNameField = new EditText(context);
-                        builder.setView(mNameField);
+                        if (dataSnapshot.hasChild("History")) {
+                            if (dataSnapshot.hasChild("NFC-Tags")) {
 
-                        builder.setTitle("Name")
+                                AlertDialog.Builder builder;
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                    builder = new AlertDialog.Builder(context, android.R.style.Theme_Material_Dialog);
+                                } else {
+                                    builder = new AlertDialog.Builder(context);
+                                }
 
-                                .setMessage("Please put in a Name for the tag")
-                                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
+                                builder.setTitle(R.string.add_current_location)
 
-                                        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
-                                        DatabaseReference userNameRef = rootRef.child("users").child(uid).child();
-                                        ValueEventListener eventListener = new ValueEventListener() {
-                                            @Override
-                                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                                if(!dataSnapshot.exists()) {
-                                                    String Name = mNameField.getText().toString();
+                                        .setMessage(R.string.Message_Alert_location)
+                                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                mNFCReference
+                                                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                                                            @Override
+                                                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                                                for (DataSnapshot iterablesnapshot : dataSnapshot.getChildren()) {
+                                                                    String id_db = iterablesnapshot.child("id").getValue().toString();
+                                                                    if (id.equals(id_db)) {
+                                                                        name = iterablesnapshot.child("name").getValue().toString();
+                                                                        isUsed = true;
+                                                                    }
 
-                                                    String id = ByteArrayToHexString(tag.getId());
+                                                                }
+                                                                if (isUsed) {
 
-                                                    NFC_Tag tag = new NFC_Tag(id, Name);
 
-                                                }
+                                                                    NFC_Location location = new NFC_Location(name, new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+
+                                                                    // Push the comment, it will appear in the list
+                                                                    db.child("History").push().setValue(location);
+
+                                                                    isUsed = false;
+                                                                } else {
+                                                                    Toast.makeText(context, R.string.card_notregistered, Toast.LENGTH_LONG).show();
+
+                                                                    isUsed = false;
+                                                                }
+                                                            }
+
+                                                            @Override
+                                                            public void onCancelled(DatabaseError databaseError) {
+                                                            }
+                                                        });
                                             }
-                                            @Override
-                                            public void onCancelled(DatabaseError databaseError) {}
-                                        };
+                                        })
+                                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int which) {
 
-                                        // Push the comment, it will appear in the list
-                                        mNFCReference.push().setValue(tag);
-                                    }
-                                })
-                                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
+                                            }
+                                        })
+                                        .setIcon(R.drawable.ic_dialog_add
+                                        );
+                                builder.show();
+                            } else {
+                                Toast.makeText(context, R.string.card_notregistered, Toast.LENGTH_LONG).show();
+                            }
+                        } else {
+                            NFC_Location location = new NFC_Location(getString(R.string.first_point), new LatLng(0, 0));
 
-                                    }
-                                })
-                                .setIcon(R.drawable.ic_dialog_add);
-                        builder.show();
+                            // Push the comment, it will appear in the list
+                            db.child("History").push().setValue(location);
+                        }
 
                     }
 
@@ -216,7 +262,7 @@ public class MainActivity extends parentClass implements NavigationView.OnNaviga
                     public void onCancelled(DatabaseError databaseError) {
 
                     }
-                });*/
+                });
 
     }
 
@@ -234,6 +280,9 @@ public class MainActivity extends parentClass implements NavigationView.OnNaviga
         return out;
     }
 
+    public String getUid() {
+        return FirebaseAuth.getInstance().getCurrentUser().getUid();
+    }
 
 
     //Sidebar
@@ -330,6 +379,7 @@ public class MainActivity extends parentClass implements NavigationView.OnNaviga
         super.onStop();
         hideProgressDialog();
     }
+
 
     public void hideKeyboard(View view) {
         final InputMethodManager imn = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
