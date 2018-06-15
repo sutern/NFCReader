@@ -44,4 +44,8 @@
     <string name="snackbar_info">Hold your card on the back of the device to add it</string>
     <string name="Message_Alert_add">Please put in a Name for the tag</string>
     <string name="card_used">This card is already in use</string>
+    <string name="first_point">first point</string>
+    <string name="card_notregistered">this card is not registered</string>
+    <string name="add_current_location">Add current Location</string>
+    <string name="Message_Alert_location">Add your current location to your history</string>
 </resources>

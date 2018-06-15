@@ -48,6 +48,9 @@
             android:name=".AboutActivity"
             android:label="@string/about"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".MapsActivity"
+            android:label="Map"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

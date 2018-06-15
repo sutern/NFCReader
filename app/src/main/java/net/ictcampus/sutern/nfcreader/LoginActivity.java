@@ -143,19 +143,15 @@ public class LoginActivity extends parentClass implements View.OnClickListener {
 
     private void updateUI(final FirebaseUser user) {
         if (user != null) {
-            // Write new user
-            writeNewUser(user.getUid(), user.getDisplayName(), user.getEmail());
             ProgressBar progressB = findViewById(R.id.progressBar);
             progressB.setVisibility(View.VISIBLE);
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            startActivityForResult(intent,1);
 
             DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
-            DatabaseReference userNameRef = rootRef.child("users").child(user.getUid());
+            DatabaseReference userNameRef = rootRef.child("users");
             ValueEventListener eventListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    if(!dataSnapshot.exists()) {
+                    if(!dataSnapshot.hasChild(user.getUid())) {
                         String username = user.getDisplayName();
 
                         // Write new user
@@ -166,6 +162,10 @@ public class LoginActivity extends parentClass implements View.OnClickListener {
                 public void onCancelled(DatabaseError databaseError) {}
             };
             userNameRef.addListenerForSingleValueEvent(eventListener);
+
+
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivityForResult(intent,1);
 
 
 

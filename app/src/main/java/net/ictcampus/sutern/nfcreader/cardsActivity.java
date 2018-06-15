@@ -119,72 +119,78 @@ public class cardsActivity extends parentClass {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
 
-                        AlertDialog.Builder builder;
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            builder = new AlertDialog.Builder(context, android.R.style.Theme_Material_Dialog);
-                        } else {
-                            builder = new AlertDialog.Builder(context);
-                        }
-                        mNameField = new EditText(context);
-                        builder.setView(mNameField);
+                        if (dataSnapshot.hasChild("NFC-Tags")) {
+                            AlertDialog.Builder builder;
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                builder = new AlertDialog.Builder(context, android.R.style.Theme_Material_Dialog);
+                            } else {
+                                builder = new AlertDialog.Builder(context);
+                            }
+                            mNameField = new EditText(context);
+                            builder.setView(mNameField);
 
-                        builder.setTitle("Name")
+                            builder.setTitle("Name")
 
-                                .setMessage(R.string.Message_Alert_add)
-                                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
+                                    .setMessage(R.string.Message_Alert_add)
+                                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
 
-                                        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
-                                        DatabaseReference userNameRef = rootRef.child("users").child(uid);
-                                        final String id = ByteArrayToHexString(tag.getId());
-                                        final ArrayList<String> ids = new ArrayList<String>();
-                                        ValueEventListener eventListener = new ValueEventListener() {
-                                            @Override
-                                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                                for (DataSnapshot iterablesnapshot : dataSnapshot.getChildren()) {
-                                                    String id_db = iterablesnapshot.child("id").getValue().toString();
-                                                    if (id == id_db) {
-                                                        isUsed = true;
+                                            DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+                                            final String id = ByteArrayToHexString(tag.getId());
+                                            mNFCReference
+                                                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                                    for (DataSnapshot iterablesnapshot : dataSnapshot.getChildren()) {
+                                                        String id_db = iterablesnapshot.child("id").getValue().toString();
+                                                        if (id.equals(id_db)) {
+                                                            isUsed = true;
+                                                        }
+
                                                     }
+                                                    if (!isUsed) {
+                                                        String Name = mNameField.getText().toString();
 
+
+                                                        NFC_Tag tag = new NFC_Tag(id, Name);
+
+                                                        // Push the comment, it will appear in the list
+                                                        mNFCReference.push().setValue(tag);
+
+                                                        isUsed = false;
+                                                    } else {
+                                                        Toast.makeText(context, R.string.card_used, Toast.LENGTH_LONG).show();
+
+                                                        isUsed = false;
+                                                    }
                                                 }
-                                                if (!isUsed) {
-                                                    String Name = mNameField.getText().toString();
 
-
-                                                    NFC_Tag tag = new NFC_Tag(id, Name);
-
-                                                    // Push the comment, it will appear in the list
-                                                    mNFCReference.push().setValue(tag);
-
-                                                    isUsed = false;
-                                                } else {
-                                                    Toast.makeText(context, R.string.card_used, Toast.LENGTH_LONG).show();
-
-                                                    isUsed = false;
+                                                @Override
+                                                public void onCancelled(DatabaseError databaseError) {
                                                 }
-                                            }
-
-                                            @Override
-                                            public void onCancelled(DatabaseError databaseError) {
-                                            }
-                                        };
+                                            });
 
 
-                                    }
-                                })
-                                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
+                                        }
+                                    })
+                                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
 
-                                    }
-                                })
-                                .setIcon(R.drawable.ic_dialog_add
-                                );
+                                        }
+                                    })
+                                    .setIcon(R.drawable.ic_dialog_add
+                                    );
 
-                        mNameField = new EditText(context);
-                        builder.setView(mNameField);
-                        builder.show();
+                            mNameField = new EditText(context);
+                            builder.setView(mNameField);
+                            builder.show();
 
+                        }else{
+                            NFC_Tag tag = new NFC_Tag("1", "Please add a card");
+
+                            // Push the comment, it will appear in the list
+                            mNFCReference.push().setValue(tag);
+                        }
                     }
 
                     @Override
