@@ -30,7 +30,6 @@
         This APP is a project by SuGla \n
         Consulting.
     </string>
-    <string name="title_activity_cards">cardsActivity</string>
     <string name="offline">Your device is currently offline</string>
     <string name="red_theme">Strawberry</string>
     <string name="settings">Settings</string>
@@ -39,4 +38,10 @@
     <string name="yellow_theme">Honey</string>
     <string name="orange_theme">Clementine</string>
     <string name="apply">Apply</string>
+    <string name="title_activity_cards">Your cards</string>
+    <string name="Warning_NFC_turned_off">Your NFC is disabled. Press back when you enabled it.</string>
+    <string name="hint_name">Name for the Tag</string>
+    <string name="snackbar_info">Hold your card on the back of the device to add it</string>
+    <string name="Message_Alert_add">Please put in a Name for the tag</string>
+    <string name="card_used">This card is already in use</string>
 </resources>

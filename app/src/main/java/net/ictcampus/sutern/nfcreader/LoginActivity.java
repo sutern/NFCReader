@@ -24,8 +24,11 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import net.ictcampus.sutern.nfcreader.models.User;
 
@@ -80,8 +83,6 @@ public class LoginActivity extends parentClass implements View.OnClickListener {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         updateUI(currentUser);
     }
-
-
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -140,7 +141,7 @@ public class LoginActivity extends parentClass implements View.OnClickListener {
                 });
     }
 
-    private void updateUI(FirebaseUser user) {
+    private void updateUI(final FirebaseUser user) {
         if (user != null) {
             // Write new user
             writeNewUser(user.getUid(), user.getDisplayName(), user.getEmail());
@@ -148,6 +149,25 @@ public class LoginActivity extends parentClass implements View.OnClickListener {
             progressB.setVisibility(View.VISIBLE);
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivityForResult(intent,1);
+
+            DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+            DatabaseReference userNameRef = rootRef.child("users").child(user.getUid());
+            ValueEventListener eventListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if(!dataSnapshot.exists()) {
+                        String username = user.getDisplayName();
+
+                        // Write new user
+                        writeNewUser(user.getUid(), username, user.getEmail());
+                    }
+                }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {}
+            };
+            userNameRef.addListenerForSingleValueEvent(eventListener);
+
+
 
         }
     }
