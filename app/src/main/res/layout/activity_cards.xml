@@ -20,17 +20,17 @@
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
     </android.support.design.widget.AppBarLayout>
-
+    <!-- Includes content of CardActivity -->
     <include layout="@layout/content_cards" />
 
+    <!-- Info-Button -->
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        android:background="@color/colorStrawberryAccent"
-        android:backgroundTint="@color/colorStrawberryAccent"
+        app:backgroundTint="#d9d9d9"
         app:srcCompat="@drawable/ic_dialog_add" />
 
 </android.support.design.widget.CoordinatorLayout>

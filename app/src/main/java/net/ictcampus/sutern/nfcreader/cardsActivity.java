@@ -1,33 +1,25 @@
 package net.ictcampus.sutern.nfcreader;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -35,18 +27,18 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
 import net.ictcampus.sutern.nfcreader.models.NFC_Tag;
-import net.ictcampus.sutern.nfcreader.models.User;
-
 import org.w3c.dom.Comment;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-public class cardsActivity extends AppCompatActivity {
+/**
+ * @author glausla
+ * @author sutern
+ */
 
+public class cardsActivity extends parentClass {
 
     private ArrayAdapter NfcListe;
     private static final String TAG = "cardAcivity";
@@ -57,18 +49,20 @@ public class cardsActivity extends AppCompatActivity {
     private String m_Text = "";
     Context context;
     private NfcAdapter mAdapter;
-
     boolean isUsed = false;
+    public String getUid() {
+        return Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(getColor());
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cards);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         mNFCReference = FirebaseDatabase.getInstance().getReference().child("users").child(getUid()).child("NFC-Tags");
-
 
         mNFCRecycler = findViewById(R.id.NFC_Tags);
 
@@ -79,11 +73,9 @@ public class cardsActivity extends AppCompatActivity {
 
         final EditText txtUrl = new EditText(this);
 
-
         nfcForegroundUtil = new NFCForegroundUtil(this);
 
         context = this;
-
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -95,16 +87,6 @@ public class cardsActivity extends AppCompatActivity {
             }
 
         });
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-    }
-
-    public String getUid() {
-        return FirebaseAuth.getInstance().getCurrentUser().getUid();
-    }
-
-
-    private void postComment() {
 
     }
 
@@ -119,10 +101,7 @@ public class cardsActivity extends AppCompatActivity {
         if (!android.nfc.NfcAdapter.getDefaultAdapter(this.getApplicationContext()).isEnabled()) {
             Toast.makeText(getApplicationContext(), R.string.Warning_NFC_turned_off, Toast.LENGTH_LONG).show();
             startActivity(new Intent(android.provider.Settings.ACTION_NFC_SETTINGS));
-
         }
-
-
     }
 
     public void onNewIntent(Intent intent) {
@@ -362,49 +341,6 @@ public class cardsActivity extends AppCompatActivity {
                 mDatabaseReference.removeEventListener(mChildEventListener);
             }
         }
-
-
     }
 }
 
-
-/*
-
-final EditText input = new EditText(MainActivity.this);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-        LinearLayout.LayoutParams.MATCH_PARENT,
-        LinearLayout.LayoutParams.MATCH_PARENT);
-        input.setLayoutParams(lp);
-        alertDialog.setView(input);
-        alertDialog.setIcon(R.drawable.key);
-
-        alertDialog.setPositiveButton("YES",
-        new DialogInterface.OnClickListener() {
-public void onClick(DialogInterface dialog, int which) {
-        password = input.getText().toString();
-        if (password.compareTo("") == 0) {
-        if (pass.equals(password)) {
-        Toast.makeText(getApplicationContext(),
-        "Password Matched", Toast.LENGTH_SHORT).show();
-        Intent myIntent1 = new Intent(view.getContext(),
-        Show.class);
-        startActivityForResult(myIntent1, 0);
-        } else {
-        Toast.makeText(getApplicationContext(),
-        "Wrong Password!", Toast.LENGTH_SHORT).show();
-        }
-        }
-        }
-        });
-
-        alertDialog.setNegativeButton("NO",
-        new DialogInterface.OnClickListener() {
-public void onClick(DialogInterface dialog, int which) {
-        dialog.cancel();
-        }
-        });
-
-        alertDialog.show();
-        }
-
-        });*/

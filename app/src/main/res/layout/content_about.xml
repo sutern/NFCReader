@@ -7,13 +7,12 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".AboutActivity"
     tools:showIn="@layout/activity_about">
-
+    <!-- Content for AboutActivity -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/text_margin"
         android:text="@string/about_text"
         android:textColor="@color/colorStrawberryText"
-        android:textSize="20sp"/>
-
+        android:textSize="20sp" />
 </android.support.v4.widget.NestedScrollView>

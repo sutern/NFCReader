@@ -6,8 +6,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.nfc.NfcAdapter;
 import android.nfc.tech.NfcA;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+
+/**
+ * @author glausla
+ * @author sutern
+ */
 
 class NFCForegroundUtil {
     private NfcAdapter nfc;

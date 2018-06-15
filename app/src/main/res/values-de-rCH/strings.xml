@@ -1,22 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="action_settings">Einstellungen</string>
-    <string name="password">Passwort</string>
-    <string name="add_card">Meine Karten anzeigen</string>
+    <string name="add_card">Karten</string>
     <string name="contact">Kontakt</string>
-    <string name="share">Teilen</string>
-    <string name="send">Senden</string>
-    <string name="firebase_status_fmt">Firebase Benutzer: %s</string>
-    <string name="google_status_fmt">Google Benutzer: %s</string>
-    <string name="signed_out">Ausgeloggt</string>
     <string name="loading">Bitte Warten...</string>
     <string name="sign_out">Ausloggen</string>
     <string name="see_history">Verlauf ansehen</string>
     <string name="title_activity_login">Einloggen</string>
     <string name="logintext">Mit Google Anmelden</string>
-    <string name="communicate">Sozial</string>
     <string name="your_location">Ihr Standort</string>
-    <string name="about">Über</string>
+    <string name="about">Über uns</string>
     <string name="logout">Ausloggen</string>
     <string name="Warning_NFC_turned_off">Ihr NFC ist deaktiviert. Drücken sie zurück, um zu der APP zu gelangen, wenn sie NFC eingeschalten haben</string>
     <string name="hint_name">Name für den Tag</string>
@@ -24,4 +17,13 @@
     <string name="snackbar_info">Halten sie Ihre Karte an die Rückseite Ihres Gerätes, um sie hinzuzufügen</string>
     <string name="Message_Alert_add">Bitte geben sie einen Namen für die Karte ein</string>
     <string name="card_used">Diese Karte wurde schon eingetragen</string>
+    <string name="navigation_drawer_open">Menu öffnen</string>
+    <string name="navigation_drawer_close">Menu schliessen</string>
+    <string name="offline">Ihr Gerät hat keinen Internetzugriff</string>
+    <string name="settings">Einstellungen</string>
+    <string name="apply">Anwenden</string>
+    <string name="title_activity_maps">Karte</string>
+    <string name="about_text">Danke, dass Sie sich für unsere Anwendung entschieden haben.  Hier ist eine kurze Anleitung, um direkt ins Geschehen einzusteigen. Wie Sie bereits erkannt haben, benötigen Sie ein Google-Konto, um diese App zu nutzen. Auf der Hauptseite können Sie sehen wann und wo Sie Ihren NFC-Chip oder Ihre Karte gescannt haben.  Sie können das Menü öffnen, indem Sie auf den Button in der Menüleiste klicken, oder Sie können einfach von links nach rechts wischen. In diesem Menü können Sie Ihrem Konto eine Karte oder einen Chip hinzufügen, Sie können uns per E-Mail kontaktieren, falls Sie uns Fehler, Fragen, Anregungen und Feedback senden wollen. Um einen NFC- Tag zu scannen, müssen Sie die Karte an die Rückseite Ihres Telefons halten. Dieses APP ist ein Projekt von SuGla Consulting.</string>
+    <string name="send_feedback">Senden Sie uns eine Rückmeldung</string>
+    <string name="feedback">Rückmeldung</string>
 </resources>

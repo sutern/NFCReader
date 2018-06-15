@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,10 +9,10 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        tools:ignore="MissingConstraints"
         tools:layout_editor_absoluteX="4dp"
-        tools:layout_editor_absoluteY="0dp"
-        tools:ignore="MissingConstraints">
-
+        tools:layout_editor_absoluteY="0dp">
+        <!-- Heading -->
         <TextView
             android:id="@+id/txtSettings"
             android:layout_width="wrap_content"
@@ -24,67 +23,56 @@
             android:text="@string/settings"
             android:textColor="@color/colorStrawberryText"
             android:textSize="24sp" />
-
+        <!-- Group for all RadioButtons -->
         <RadioGroup
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true">
-
+            <!-- Standard RadioButton strawberry theme -->
             <RadioButton
                 android:id="@+id/strawberry"
                 android:layout_width="119dp"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
                 android:layout_marginTop="104dp"
                 android:buttonTint="@color/colorStrawberryText"
                 android:checked="true"
                 android:text="@string/red_theme"
                 android:textColor="@color/colorStrawberryText" />
-
+            <!-- Blueberry theme button -->
             <RadioButton
                 android:id="@+id/blueberry"
                 android:layout_width="119dp"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/strawberry"
-                android:layout_centerHorizontal="true"
                 android:buttonTint="@color/colorStrawberryText"
                 android:text="@string/blue_theme"
                 android:textColor="@color/colorStrawberryText" />
-
+            <!-- Kiwi theme button -->
             <RadioButton
                 android:id="@+id/kiwi"
                 android:layout_width="119dp"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/blueberry"
-                android:layout_centerHorizontal="true"
                 android:buttonTint="@color/colorStrawberryText"
                 android:text="@string/green_theme"
                 android:textColor="@color/colorStrawberryText" />
-
+            <!-- Honey theme button -->
             <RadioButton
                 android:id="@+id/honey"
                 android:layout_width="119dp"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/kiwi"
-                android:layout_centerHorizontal="true"
                 android:buttonTint="@color/colorStrawberryText"
                 android:text="@string/yellow_theme"
                 android:textColor="@color/colorStrawberryText" />
-
+            <!-- Clementine theme button -->
             <RadioButton
                 android:id="@+id/clementine"
                 android:layout_width="119dp"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/honey"
-                android:layout_centerInParent="true"
                 android:buttonTint="@color/colorStrawberryText"
                 android:text="@string/orange_theme"
                 android:textColor="@color/colorStrawberryText" />
-
         </RadioGroup>
-
+        <!-- Apply-Button -->
         <Button
             android:id="@+id/apply"
             android:layout_width="match_parent"

@@ -8,12 +8,12 @@
     android:fitsSystemWindows="true"
     tools:openDrawer="start">
 
+    <!-- Includes Toolbar layout and includes content as well -->
     <include
         layout="@layout/app_bar_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
-
+    <!-- Menu drawer -->
     <android.support.design.widget.NavigationView
         android:id="@+id/nav_view"
         android:layout_width="wrap_content"

@@ -2,19 +2,19 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LoginActivity"
-    android:id="@+id/mainLayout"
-    android:padding="15dp">
+    android:padding="15dp"
+    tools:context=".LoginActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        tools:ignore="MissingConstraints"
         tools:layout_editor_absoluteX="10dp"
-        tools:layout_editor_absoluteY="10dp"
-        tools:ignore="MissingConstraints">
-
+        tools:layout_editor_absoluteY="10dp">
+        <!-- Heading -->
         <TextView
             android:id="@+id/emailLogin"
             android:layout_width="match_parent"
@@ -26,7 +26,7 @@
             android:textAllCaps="true"
             android:textColor="@color/colorStrawberryAccent"
             android:textSize="20sp" />
-
+        <!-- Underline for Heading -->
         <View
             android:layout_width="match_parent"
             android:layout_height="2dp"
@@ -34,7 +34,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="2dp"
             android:background="#FFFFFF" />
-
+        <!-- Standard Google login button -->
         <com.google.android.gms.common.SignInButton
             android:id="@+id/sign_in_button"
             android:layout_width="match_parent"
@@ -42,14 +42,14 @@
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="122dp"
             android:background="#FFFFFF" />
-
+        <!-- Logo -->
         <ImageView
             android:id="@+id/imageView4"
             android:layout_width="128dp"
             android:layout_height="128dp"
             android:layout_centerHorizontal="true"
             app:srcCompat="@drawable/ic_nfc_logo" />
-
+        <!-- Progress icon -->
         <ProgressBar
             android:id="@+id/progressBar"
             style="?android:attr/progressBarStyle"

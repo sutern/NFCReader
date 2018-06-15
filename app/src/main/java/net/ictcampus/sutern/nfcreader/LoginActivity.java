@@ -1,17 +1,12 @@
 package net.ictcampus.sutern.nfcreader;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.TextView;
-
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -29,20 +24,21 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
 import net.ictcampus.sutern.nfcreader.models.User;
-
 import static android.view.View.GONE;
+
+/**
+ * @author glausla
+ * @author sutern
+ */
 
 public class LoginActivity extends parentClass implements View.OnClickListener {
 
 
     private static final String TAG = "GoogleActivity";
     private static final int RC_SIGN_IN = 9001;
-
     private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
-
     private GoogleSignInClient mGoogleSignInClient;
 
     @Override
@@ -51,13 +47,15 @@ public class LoginActivity extends parentClass implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        //Loading icon disable
         ProgressBar progressB = findViewById(R.id.progressBar);
         progressB.setVisibility(GONE);
+        //
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
-
+        //Listener on sign in button
         findViewById(R.id.sign_in_button).setOnClickListener(this);
-
+        //Initialize Googl Login
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
@@ -70,12 +68,13 @@ public class LoginActivity extends parentClass implements View.OnClickListener {
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
-
+        //Disable ProgressBar
         ProgressBar progressB = findViewById(R.id.progressBar);
         progressB.setVisibility(GONE);
     }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -98,13 +97,13 @@ public class LoginActivity extends parentClass implements View.OnClickListener {
                 updateUI(null);
             }
         }
-        if (requestCode == 1){
+        //Sign out transfer in MainActivity
+        if (requestCode == 1) {
             signOut();
         }
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
-        Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
@@ -125,13 +124,15 @@ public class LoginActivity extends parentClass implements View.OnClickListener {
     }
 
     private void signIn() {
+        //Signing in with Google
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
     private void signOut() {
+        //Signs out of Firebase
         mAuth.signOut();
-
+        //Signs out of Google
         mGoogleSignInClient.signOut().addOnCompleteListener(this,
                 new OnCompleteListener<Void>() {
                     @Override
@@ -145,30 +146,31 @@ public class LoginActivity extends parentClass implements View.OnClickListener {
         if (user != null) {
             // Write new user
             writeNewUser(user.getUid(), user.getDisplayName(), user.getEmail());
+            //Eneable ProgressBar
             ProgressBar progressB = findViewById(R.id.progressBar);
             progressB.setVisibility(View.VISIBLE);
+            //Starts MainActivity with signOut() method
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            startActivityForResult(intent,1);
+            startActivityForResult(intent, 1);
 
             DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
             DatabaseReference userNameRef = rootRef.child("users").child(user.getUid());
             ValueEventListener eventListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    if(!dataSnapshot.exists()) {
+                    if (!dataSnapshot.exists()) {
                         String username = user.getDisplayName();
 
                         // Write new user
                         writeNewUser(user.getUid(), username, user.getEmail());
                     }
                 }
+
                 @Override
-                public void onCancelled(DatabaseError databaseError) {}
+                public void onCancelled(DatabaseError databaseError) {
+                }
             };
             userNameRef.addListenerForSingleValueEvent(eventListener);
-
-
-
         }
     }
 
@@ -184,6 +186,7 @@ public class LoginActivity extends parentClass implements View.OnClickListener {
     public void onClick(View v) {
         int i = v.getId();
         if (i == R.id.sign_in_button) {
+            //Signs in
             signIn();
             ProgressBar progressB = findViewById(R.id.progressBar);
             progressB.setVisibility(GONE);

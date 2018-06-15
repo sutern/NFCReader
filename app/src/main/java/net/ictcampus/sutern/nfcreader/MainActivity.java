@@ -1,16 +1,12 @@
 package net.ictcampus.sutern.nfcreader;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.nfc.Tag;
-import android.os.Build;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -20,21 +16,14 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.EditText;
 import android.widget.Toast;
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -59,17 +48,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-
-import org.w3c.dom.Text;
-
 import java.util.Objects;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
-import net.ictcampus.sutern.nfcreader.models.NFC_Tag;
 
 /**
  * @author glausla
@@ -81,39 +60,24 @@ public class MainActivity extends parentClass implements NavigationView.OnNaviga
         LocationListener {
 
     public ProgressDialog mProgressDialog;
-
     private static final int MY_PERMISSION_REQUEST_CODE = 11;
     private GoogleMap mMap;
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 10;
-
     private Location mLastLocation;
-
     private FusedLocationProviderClient mFusedLocationClient;
-
     double latitude, longitude;
-
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
-
     private static int UPDATE_INTERVAL = 5000;
     private static int FASTETS_INTERVAL = 3000;
     private static int DISPLACEMENT = 10;
-
     private LocationCallback mLocationCallback;
-
     private DatabaseReference mNFCReference;
-
     NFCForegroundUtil nfcForegroundUtil = null;
-
     private DatabaseReference mDatabase;
-
     private String userid = FirebaseAuth.getInstance().getUid();
-
     private DatabaseReference db = FirebaseDatabase.getInstance().getReference().child("users").child(userid);
     private Query getInfoFromDB = db;
-
-
-
     Marker myCurrent;
 
     /**
@@ -127,7 +91,6 @@ public class MainActivity extends parentClass implements NavigationView.OnNaviga
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mDatabase = FirebaseDatabase.getInstance().getReference().child("users");
-
 
         getInfoFromDB.addValueEventListener(new ValueEventListener() {
             @Override
@@ -143,7 +106,7 @@ public class MainActivity extends parentClass implements NavigationView.OnNaviga
                 txtUsername.setText(name);
                 txtEmail.setText(email);
 
-                Snackbar.make(findViewById(R.id.drawer_layout),"Welcome " + name, Snackbar.LENGTH_LONG).show();
+                Snackbar.make(findViewById(R.id.drawer_layout), "Success", Snackbar.LENGTH_LONG).show();
             }
 
             @Override
@@ -291,7 +254,6 @@ public class MainActivity extends parentClass implements NavigationView.OnNaviga
         return true;
     }
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -320,13 +282,13 @@ public class MainActivity extends parentClass implements NavigationView.OnNaviga
             return true;
         }
          else if (id == R.id.nav_contact) {
-            String[] to = {"sugla.consulting@gmail.com"};
+            String[] to = {getString(R.string.contact_email)};
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.setData(Uri.parse("mailto:"));
             intent.putExtra(Intent.EXTRA_EMAIL, to);
-            intent.putExtra(Intent.EXTRA_SUBJECT, "Feedback");
+            intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.feedback));
             intent.setType("message/rfc822");
-            Intent chooser = Intent.createChooser(intent, "Send us Feedback");
+            Intent chooser = Intent.createChooser(intent, getString(R.string.send_feedback));
             startActivity(chooser);
 
         } else if (id == R.id.nav_about) {
@@ -369,15 +331,12 @@ public class MainActivity extends parentClass implements NavigationView.OnNaviga
         hideProgressDialog();
     }
 
-
-
     public void hideKeyboard(View view) {
         final InputMethodManager imn = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         if (imn != null) {
             imn.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
-
 
     /**
      * when the app has connected with google maps it starts the search for
@@ -387,11 +346,8 @@ public class MainActivity extends parentClass implements NavigationView.OnNaviga
      */
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-
-
         displayLocation();
         startLocationUpdates();
-
     }
 
     @Override
@@ -403,7 +359,6 @@ public class MainActivity extends parentClass implements NavigationView.OnNaviga
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
-
 
     /**
      * starts the functions used to search the current location if the permission
@@ -427,7 +382,6 @@ public class MainActivity extends parentClass implements NavigationView.OnNaviga
                 }
                 break;
         }
-
     }
 
     /**
@@ -531,7 +485,6 @@ public class MainActivity extends parentClass implements NavigationView.OnNaviga
             return false;
         }
         return true;
-
     }
 
     /**
@@ -542,7 +495,6 @@ public class MainActivity extends parentClass implements NavigationView.OnNaviga
                 {
                         Manifest.permission.ACCESS_COARSE_LOCATION,
                         Manifest.permission.ACCESS_FINE_LOCATION
-
                 }, MY_PERMISSION_REQUEST_CODE);
     }
 
@@ -556,8 +508,6 @@ public class MainActivity extends parentClass implements NavigationView.OnNaviga
             return;
         }
         mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
-
-
     }
 
     /**
@@ -585,7 +535,6 @@ public class MainActivity extends parentClass implements NavigationView.OnNaviga
         if (!android.nfc.NfcAdapter.getDefaultAdapter(this.getApplicationContext()).isEnabled()) {
             Toast.makeText(getApplicationContext(), R.string.Warning_NFC_turned_off, Toast.LENGTH_LONG).show();
             startActivity(new Intent(android.provider.Settings.ACTION_NFC_SETTINGS));
-
         }
     }
 
@@ -593,7 +542,6 @@ public class MainActivity extends parentClass implements NavigationView.OnNaviga
     private void stopLocationUpdates() {
         mFusedLocationClient.removeLocationUpdates(mLocationCallback);
     }
-
 }
 
 
