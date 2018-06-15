@@ -44,13 +44,17 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import net.ictcampus.sutern.nfcreader.models.NFC_Location;
 import net.ictcampus.sutern.nfcreader.models.NFC_Tag;
+
+import java.util.ArrayList;
 
 /**
  * @author glausla
@@ -62,6 +66,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         LocationListener {
 
     public ProgressDialog mProgressDialog;
+
+    private boolean isUsed;
 
     private static final int MY_PERMISSION_REQUEST_CODE = 11;
     private GoogleMap mMap;
@@ -88,6 +94,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     Marker myCurrent;
 
+    Context context;
+
     /**
      * on create methode
      *
@@ -98,6 +106,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        context = this;
 
         nfcForegroundUtil = new NFCForegroundUtil(this);
 
@@ -142,64 +151,79 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public void onNewIntent(Intent intent) {
         final Tag tag = intent.getParcelableExtra(android.nfc.NfcAdapter.EXTRA_TAG);
-        /*final String uid = getUid();
-        FirebaseDatabase.getInstance().getReference().child("users").child(uid)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
+        final String uid = getUid();
 
-                        AlertDialog.Builder builder;
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            builder = new AlertDialog.Builder(context, android.R.style.Theme_Material_Dialog);
-                        } else {
-                            builder = new AlertDialog.Builder(context);
+        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference userNameRef = rootRef.child("users").child(uid);
+        final String id = ByteArrayToHexString(tag.getId());
+        final ArrayList<String> ids = new ArrayList<String>();
+        ValueEventListener eventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.hasChild("id")) {
+                    for (DataSnapshot iterablesnapshot : dataSnapshot.getChildren()) {
+                        String id_db = iterablesnapshot.child("id").getValue().toString();
+                        //String name_zw = iterablesnapshot.child("");
+                        if (id == id_db) {
+
+                            isUsed = true;
                         }
-                        mNameField = new EditText(context);
-                        builder.setView(mNameField);
 
-                        builder.setTitle("Name")
+                    }
+                }
+                if (!isUsed) {
 
-                                .setMessage("Please put in a Name for the tag")
-                                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
+                    FirebaseDatabase.getInstance().getReference().child("users").child(uid)
+                            .addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
 
-                                        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
-                                        DatabaseReference userNameRef = rootRef.child("users").child(uid).child();
-                                        ValueEventListener eventListener = new ValueEventListener() {
-                                            @Override
-                                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                                if(!dataSnapshot.exists()) {
-                                                    String Name = mNameField.getText().toString();
+                                    AlertDialog.Builder builder;
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                        builder = new AlertDialog.Builder(context, android.R.style.Theme_Material_Dialog);
+                                    } else {
+                                        builder = new AlertDialog.Builder(context);
+                                    }
 
-                                                    String id = ByteArrayToHexString(tag.getId());
+                                    builder.setTitle("Name")
 
-                                                    NFC_Tag tag = new NFC_Tag(id, Name);
+                                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int which) {
+
+                                                    NFC_Location location_NFC = new NFC_Location();
+
+                                                    // Push the comment, it will appear in the list
+                                                    mNFCReference.push().setValue(location_NFC);
+                                                }
+                                            })
+                                            .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int which) {
 
                                                 }
-                                            }
-                                            @Override
-                                            public void onCancelled(DatabaseError databaseError) {}
-                                        };
+                                            })
+                                            .setIcon(R.drawable.ic_dialog_add);
+                                    builder.show();
 
-                                        // Push the comment, it will appear in the list
-                                        mNFCReference.push().setValue(tag);
-                                    }
-                                })
-                                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
+                                }
 
-                                    }
-                                })
-                                .setIcon(R.drawable.ic_dialog_add);
-                        builder.show();
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
 
-                    }
+                                }
+                            });
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
+                    isUsed = false;
+                } else {
 
-                    }
-                });*/
+                    isUsed = false;
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        };
+
 
     }
 
@@ -217,6 +241,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return out;
     }
 
+    public String getUid() {
+        return FirebaseAuth.getInstance().getCurrentUser().getUid();
+    }
 
 
     //Sidebar
@@ -263,18 +290,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (id == R.id.nav_addCard) {
             startActivity(new Intent(MainActivity.this, cardsActivity.class));
             return true;
-        } /*else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
         }
-*/
+
+
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
